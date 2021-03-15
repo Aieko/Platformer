@@ -9,18 +9,26 @@ public class Enemy_Instant : MonoBehaviour
     public int maxHealth = 100;
     int currentHealth;
 
+    bool IsDead = false;
+
     public EnemyHealthBar_Script EnemyhealthBar;
+    EnemyAI enemyAI;
+    Rigidbody2D rg;
+    
 
     // Start is called before the first frame update
     void Start()
     {
         currentHealth = maxHealth;
         EnemyhealthBar.SetMaxHealth(maxHealth);
+        enemyAI = GetComponent<EnemyAI>();
+        rg = GetComponent<Rigidbody2D>();
     }
 
 
     public void TakeDamage(int damage)
     {
+        if(!IsDead)
         currentHealth -= damage;
 
         //play hurt animation
@@ -38,12 +46,15 @@ public class Enemy_Instant : MonoBehaviour
     void Die()
     {
         animator.SetBool("IsDead", true);
+        IsDead = true;
 
-        this.GetComponent<Collider2D>().enabled = false;
-
+        this.GetComponent<CircleCollider2D>().enabled = false;
+        this.GetComponent<BoxCollider2D>().enabled = false;
         this.enabled = false;
-
+        enemyAI.enabled = false;
         EnemyhealthBar.EnableHealthBar(false);
+        rg.simulated = false;
+
     }
    
 }
