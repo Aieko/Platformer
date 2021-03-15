@@ -5,8 +5,9 @@ using UnityEngine;
 public class Enemy_Instant : MonoBehaviour
 {
     public Animator animator;
+    
    
-    public int maxHealth = 100;
+    public int maxHealth = 3;
     int currentHealth;
 
     bool IsDead = false;
@@ -52,8 +53,10 @@ public class Enemy_Instant : MonoBehaviour
         this.GetComponent<BoxCollider2D>().enabled = false;
         this.enabled = false;
         enemyAI.enabled = false;
+        enemyAI.IsChasing = false;
         EnemyhealthBar.EnableHealthBar(false);
         rg.simulated = false;
+        
 
     }
    

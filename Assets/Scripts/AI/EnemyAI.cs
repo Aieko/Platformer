@@ -5,22 +5,27 @@ using Pathfinding;
 
 public class EnemyAI : MonoBehaviour
 {
-    public Transform target;
+    
 
     public float speed = 120f;
     public float nextWaypointDistance = 3f;
-
-    private RaycastHit hit;
+    
+    public GameObject player;
 
 
     Path path;
     int currentWaypoint = 0;
     bool reachedEndOfPath = false;
 
+    public bool IsChasing = false;
+    public float distanceToBreakChasing = 3;
+
+
     Seeker seeker;
     Rigidbody2D rb;
     SpriteRenderer sr;
-  
+    
+
 
     // Start is called before the first frame update
     void Start()
@@ -29,14 +34,15 @@ public class EnemyAI : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
        
-        InvokeRepeating("UpdatePath", 0f, .5f);
+        
+        
         
     }
     void UpdatePath()
     {
-        if(seeker.IsDone())
+        if(seeker.IsDone() && IsChasing)
         {
-            seeker.StartPath(rb.position, target.position, OnPathComplete);
+            seeker.StartPath(rb.position, player.transform.position, OnPathComplete);
         }
     }
     void OnPathComplete(Path p)
@@ -51,10 +57,7 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-      
-
-       
-        
+     
         if (path == null)
                 return;
             if (currentWaypoint >= path.vectorPath.Count)
@@ -67,13 +70,22 @@ public class EnemyAI : MonoBehaviour
             {
                 reachedEndOfPath = false;
             }
+
+            float distanceToWayPoint = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+            float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+            
+            if(IsChasing && distanceToPlayer>distanceToBreakChasing)
+                {
+                  CancelInvoke();
+                  IsChasing = false;
+                }
+
             Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
             Vector2 force = direction * speed * Time.deltaTime;
 
             rb.AddForce(force);
 
-            float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
-            if (distance < nextWaypointDistance)
+            if (distanceToWayPoint < nextWaypointDistance)
             {
                 currentWaypoint++;
             }
@@ -88,5 +100,25 @@ public class EnemyAI : MonoBehaviour
             }
         
        
+    }
+
+    void Attack()
+    {
+        if(reachedEndOfPath && IsChasing)
+        {
+
+        }
+    }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            if(!IsChasing)
+            {
+                IsChasing = true;
+                InvokeRepeating("UpdatePath", 0f, .5f);
+            }
+           
+        }
     }
 }
