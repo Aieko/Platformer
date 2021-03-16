@@ -14,8 +14,14 @@ public class Enemy_Instant : MonoBehaviour
 
     public EnemyHealthBar_Script EnemyhealthBar;
     EnemyAI enemyAI;
-    Rigidbody2D rg;
-    
+    Rigidbody2D rb;
+    float horizontalMove;
+
+    //public float attackRange = 0.5f;
+    public int attackDamage = 1;
+
+    public float attackRate = 0.5f;
+    float nextAttackTime = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -23,10 +29,37 @@ public class Enemy_Instant : MonoBehaviour
         currentHealth = maxHealth;
         EnemyhealthBar.SetMaxHealth(maxHealth);
         enemyAI = GetComponent<EnemyAI>();
-        rg = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
+    void FixedUpdate()
+    {
+        float distanceToPlayer = Vector2.Distance(rb.position, enemyAI.player.transform.position);
 
+        if (enemyAI.IsChasing && distanceToPlayer <= 1f)
+        {
+            if (Time.time >= nextAttackTime)
+            {
+                Attack();
+
+                nextAttackTime = Time.time + 1f / attackRate;
+            }
+            
+        }
+
+        if (Mathf.Abs(rb.velocity.x)>0.3)
+        {
+            animator.SetInteger("AnimState", 2);
+        }
+        else if (Mathf.Abs(rb.velocity.x) < 0.3)
+        {
+            if(enemyAI.IsPlayerNearby)
+            animator.SetInteger("AnimState", 1);
+            else animator.SetInteger("AnimState", 0);
+        }
+
+
+    }
     public void TakeDamage(int damage)
     {
         if(!IsDead)
@@ -44,6 +77,12 @@ public class Enemy_Instant : MonoBehaviour
         }
     }
 
+    public void Attack()
+    {
+        animator.SetTrigger("Attack");
+        
+
+    }
     void Die()
     {
         animator.SetBool("IsDead", true);
@@ -55,7 +94,7 @@ public class Enemy_Instant : MonoBehaviour
         enemyAI.enabled = false;
         enemyAI.IsChasing = false;
         EnemyhealthBar.EnableHealthBar(false);
-        rg.simulated = false;
+        rb.simulated = false;
         
 
     }

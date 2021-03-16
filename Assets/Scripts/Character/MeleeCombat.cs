@@ -8,6 +8,7 @@ public class MeleeCombat : MonoBehaviour
 
     public Transform attackPoint;
     public LayerMask enemyLayers;
+    public Enemy_Instant enemy;
 
     public float attackRange = 0.5f;
     public int attackDamage = 40;
@@ -45,6 +46,8 @@ public class MeleeCombat : MonoBehaviour
          return;
 
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Physics2D.IgnoreCollision(enemy.GetComponent<CircleCollider2D>(), GetComponent<Collider2D>());
+        Physics2D.IgnoreCollision(enemy.GetComponent<CircleCollider2D>(), GetComponent<Collider2D>());
     }
 }
 

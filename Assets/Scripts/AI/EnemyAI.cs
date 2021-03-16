@@ -13,13 +13,15 @@ public class EnemyAI : MonoBehaviour
     public GameObject player;
 
 
-    Path path;
+    public Path path;
     int currentWaypoint = 0;
     bool reachedEndOfPath = false;
 
     public bool IsChasing = false;
+    public bool IsPlayerNearby = false;
     public float distanceToBreakChasing = 3;
 
+    
 
     Seeker seeker;
     Rigidbody2D rb;
@@ -33,10 +35,7 @@ public class EnemyAI : MonoBehaviour
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
-       
-        
-        
-        
+         
     }
     void UpdatePath()
     {
@@ -74,11 +73,12 @@ public class EnemyAI : MonoBehaviour
             float distanceToWayPoint = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
             float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
             
-            if(IsChasing && distanceToPlayer>distanceToBreakChasing)
+            if(IsChasing && distanceToPlayer>=distanceToBreakChasing)
                 {
                   CancelInvoke();
                   IsChasing = false;
                 }
+            
 
             Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
             Vector2 force = direction * speed * Time.deltaTime;
@@ -102,23 +102,26 @@ public class EnemyAI : MonoBehaviour
        
     }
 
-    void Attack()
-    {
-        if(reachedEndOfPath && IsChasing)
-        {
-
-        }
-    }
+   
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
+            IsPlayerNearby = true;
             if(!IsChasing)
             {
                 IsChasing = true;
                 InvokeRepeating("UpdatePath", 0f, .5f);
             }
            
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            IsPlayerNearby = false;
         }
     }
 }
