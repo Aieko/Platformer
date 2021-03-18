@@ -15,24 +15,41 @@ public class CharacterMovement2D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        horizontalMove = Input.GetAxisRaw("Horizontal")* runSpeed;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
 
         animator.SetFloat("Speed", Mathf.Abs(horizontalMove));
 
-        if(Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump"))
         {
             jump = true;
             animator.SetBool("IsJumping", true);
         }
     }
 
-   public void OnLanding()
+    public void OnLanding()
     {
         animator.SetBool("IsJumping", false);
     }
 
     private void FixedUpdate()
     {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("MeleeAttack"))
+           {
+
+            controller.Move(0, false, false);
+ 
+            return;
+            
+           }
+        else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
+        {
+            if(controller.m_FacingRight)
+            controller.Move(0.03f, false, false);
+            else
+                controller.Move(-0.03f, false, false);
+
+            return;
+        }
         controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
         jump = false;
       

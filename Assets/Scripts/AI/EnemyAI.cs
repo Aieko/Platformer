@@ -20,12 +20,13 @@ public class EnemyAI : MonoBehaviour
     public bool IsChasing = false;
     public bool IsPlayerNearby = false;
     public float distanceToBreakChasing = 3;
+   
 
-    
 
     Seeker seeker;
     Rigidbody2D rb;
     SpriteRenderer sr;
+    Enemy_Instant enemy;
     
 
 
@@ -35,13 +36,32 @@ public class EnemyAI : MonoBehaviour
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        enemy = GetComponent<Enemy_Instant>();
          
     }
     void UpdatePath()
     {
-        if(seeker.IsDone() && IsChasing)
+        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+
+        if (seeker.IsDone() && IsChasing)
         {
-            seeker.StartPath(rb.position, player.transform.position, OnPathComplete);
+            Vector2 StartPathPoint = rb.position;
+            if(distanceToPlayer>1f)
+            {
+                if (rb.position.x < player.transform.position.x)
+                {
+                    StartPathPoint += new Vector2(0.5f, 0);
+                }
+                else
+                {
+                    StartPathPoint -= new Vector2(0.5f, 0);
+                }
+
+                seeker.StartPath(StartPathPoint, player.transform.position, OnPathComplete);
+            }
+            
+
+           
         }
     }
     void OnPathComplete(Path p)
@@ -59,7 +79,9 @@ public class EnemyAI : MonoBehaviour
      
         if (path == null)
                 return;
-            if (currentWaypoint >= path.vectorPath.Count)
+        
+
+        if (currentWaypoint >= path.vectorPath.Count)
             {
                 reachedEndOfPath = true;
                 return;
@@ -70,51 +92,50 @@ public class EnemyAI : MonoBehaviour
                 reachedEndOfPath = false;
             }
 
-            float distanceToWayPoint = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
-            float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
-            
-            if(IsChasing && distanceToPlayer>=distanceToBreakChasing)
+        float distanceToWayPoint = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+
+       
+
+        if (IsChasing && distanceToPlayer>=distanceToBreakChasing&&!IsPlayerNearby)
                 {
-                  CancelInvoke();
+                  CancelInvoke("UpdatePath");
                   IsChasing = false;
                 }
-            
 
-            Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            Vector2 force = direction * speed * Time.deltaTime;
+        if (distanceToPlayer < 0.5f)
+        {
+            return;
+        }
+        Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+            Vector2 force = direction * speed;
+            force.y = 0f;
+        
+            rb.velocity = force;
+           
 
-            rb.AddForce(force);
-
-            if (distanceToWayPoint < nextWaypointDistance)
+        if (distanceToWayPoint < nextWaypointDistance)
             {
                 currentWaypoint++;
             }
 
-            if (rb.velocity.x >= 0.01f)
-            {
-                sr.flipX = true;
-            }
-            else if (rb.velocity.x <= -0.01f)
-            {
-                sr.flipX = false;
-            }
         
-       
     }
 
    
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player" )
         {
             IsPlayerNearby = true;
             if(!IsChasing)
             {
                 IsChasing = true;
-                InvokeRepeating("UpdatePath", 0f, .5f);
+                InvokeRepeating("UpdatePath", 0f, 0.5f);
             }
            
         }
+        
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -124,4 +145,5 @@ public class EnemyAI : MonoBehaviour
             IsPlayerNearby = false;
         }
     }
+
 }
