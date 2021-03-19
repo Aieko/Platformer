@@ -8,12 +8,21 @@ public class CharacterMovement2D : MonoBehaviour
 
     public Animator animator;
 
+    Rigidbody2D rb;
+
     public float runSpeed = 40f;
     float horizontalMove = 0f;
     bool jump = false;
 
-    // Update is called once per frame
-    void Update()
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+
+        // Update is called once per frame
+        void Update()
     {
         horizontalMove = Input.GetAxisRaw("Horizontal") * runSpeed;
 
@@ -23,12 +32,23 @@ public class CharacterMovement2D : MonoBehaviour
         {
             jump = true;
             animator.SetBool("IsJumping", true);
+
         }
+
+        if(rb.velocity.y<-0.1f && !controller.m_Grounded)
+        {
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("Falling", true);
+ 
+        }
+
+
     }
 
     public void OnLanding()
     {
         animator.SetBool("IsJumping", false);
+        animator.SetBool("Falling", false);
     }
 
     private void FixedUpdate()
@@ -50,6 +70,7 @@ public class CharacterMovement2D : MonoBehaviour
 
             return;
         }
+
         controller.Move(horizontalMove * Time.fixedDeltaTime, false, jump);
         jump = false;
       

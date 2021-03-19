@@ -22,7 +22,6 @@ public class EnemyAI : MonoBehaviour
     public float distanceToBreakChasing = 3;
    
 
-
     Seeker seeker;
     Rigidbody2D rb;
     SpriteRenderer sr;
@@ -41,35 +40,27 @@ public class EnemyAI : MonoBehaviour
     }
     void UpdatePath()
     {
-        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+        
 
         if (seeker.IsDone() && IsChasing)
         {
             Vector2 StartPathPoint = rb.position;
-            if(distanceToPlayer>1f)
-            {
-                if (rb.position.x < player.transform.position.x)
-                {
-                    StartPathPoint += new Vector2(0.5f, 0);
-                }
-                else
-                {
-                    StartPathPoint -= new Vector2(0.5f, 0);
-                }
 
-                seeker.StartPath(StartPathPoint, player.transform.position, OnPathComplete);
-            }
-            
+            seeker.StartPath(StartPathPoint, player.transform.position, OnPathComplete);
 
-           
-        }
+    }
     }
     void OnPathComplete(Path p)
     {
-        if(!p.error)
+        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+        if (!p.error)
         {
             path = p;
-            currentWaypoint = 0;
+            if (distanceToPlayer > 1f)
+                currentWaypoint = 1;
+            else
+                currentWaypoint = 0;
+
         }
     }
 
@@ -77,7 +68,7 @@ public class EnemyAI : MonoBehaviour
     void FixedUpdate()
     {
      
-        if (path == null)
+        if (path == null || enemy.animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
                 return;
         
 
@@ -103,15 +94,17 @@ public class EnemyAI : MonoBehaviour
                   IsChasing = false;
                 }
 
-        if (distanceToPlayer < 0.5f)
+        if (distanceToPlayer < 0.6f)
         {
             return;
         }
+       
         Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
             Vector2 force = direction * speed;
             force.y = 0f;
-        
-            rb.velocity = force;
+           
+                rb.velocity = force;
+            
            
 
         if (distanceToWayPoint < nextWaypointDistance)

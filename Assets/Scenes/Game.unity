@@ -364,6 +364,24 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 7878160341434237939}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &795629185 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1306715263400670208, guid: b62d75d3da7c58448a406a0cada7c4ca,
+    type: 3}
+  m_PrefabInstance: {fileID: 1306715263230437365}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &795629195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 795629185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53340f1bd749dc84c871c1b6638635ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &870900645
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,7 +657,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 1306715263230437365}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 795629185}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2eb230aefc5d9b4e9fbca37724c019c, type: 3}
@@ -1791,8 +1809,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1306715263400670220, guid: b62d75d3da7c58448a406a0cada7c4ca,
         type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1306715263400670220, guid: b62d75d3da7c58448a406a0cada7c4ca,
+        type: 3}
       propertyPath: m_LinearDrag
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1306715263400670220, guid: b62d75d3da7c58448a406a0cada7c4ca,
         type: 3}
@@ -1831,6 +1854,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1306715263400670221, guid: b62d75d3da7c58448a406a0cada7c4ca,
         type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1306715263400670221, guid: b62d75d3da7c58448a406a0cada7c4ca,
+        type: 3}
       propertyPath: m_Offset.x
       value: 0.0410116
       objectReference: {fileID: 0}
@@ -1847,7 +1875,7 @@ PrefabInstance:
     - target: {fileID: 1306715263400670222, guid: b62d75d3da7c58448a406a0cada7c4ca,
         type: 3}
       propertyPath: maxHealth
-      value: 9
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1306715263400670222, guid: b62d75d3da7c58448a406a0cada7c4ca,
         type: 3}
@@ -1859,6 +1887,11 @@ PrefabInstance:
       propertyPath: EnemyhealthBar
       value: 
       objectReference: {fileID: 32870257}
+    - target: {fileID: 1306715263400670222, guid: b62d75d3da7c58448a406a0cada7c4ca,
+        type: 3}
+      propertyPath: pushingforce.x
+      value: 250
+      objectReference: {fileID: 0}
     - target: {fileID: 1306715263400670223, guid: b62d75d3da7c58448a406a0cada7c4ca,
         type: 3}
       propertyPath: m_RootOrder

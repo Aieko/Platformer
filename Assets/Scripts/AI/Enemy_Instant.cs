@@ -24,10 +24,13 @@ public class Enemy_Instant : MonoBehaviour
     public float attackRate = 0.5f;
     float nextAttackTime = 0f;
 
+    public Vector2 pushingforce = new Vector2(180f,0f);
+
     private bool m_FacingRight = false;  // For determining which way the player is currently facing.
 
     enum enemyState { Idle, CombatIdle, Run}
 
+    bool IsPatrol = false;
     
     public bool GetFlip()
     {
@@ -47,14 +50,29 @@ public class Enemy_Instant : MonoBehaviour
     {
         float distanceToPlayer = Vector2.Distance(rb.position, enemyAI.player.transform.position);
 
-        if (enemyAI.player.transform.position.x > transform.position.x && !m_FacingRight)
+        if (enemyAI.IsChasing)
         {
-            Flip();
+            if (enemyAI.player.transform.position.x > transform.position.x && !m_FacingRight)
+            {
+                Flip();
+            }
+            else if (enemyAI.player.transform.position.x < transform.position.x && m_FacingRight)
+            {
+                Flip();
+            }
         }
-        else if(enemyAI.player.transform.position.x < transform.position.x && m_FacingRight)
+        else if(IsPatrol)
         {
-            Flip();
+            if (enemyAI.path.vectorPath[0].x > transform.position.x && !m_FacingRight)
+            {
+                Flip();
+            }
+            else if (enemyAI.path.vectorPath[0].x < transform.position.x && m_FacingRight)
+            {
+                Flip();
+            }
         }
+       
 
         if (enemyAI.IsChasing && distanceToPlayer <= 1f && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
         {
@@ -68,18 +86,19 @@ public class Enemy_Instant : MonoBehaviour
             
         }
 
-        if (Mathf.Abs(rb.velocity.x) > 0)
+        if (Mathf.Abs(rb.velocity.x) > 1f)
         {
             animator.SetInteger("AnimState", 2);
         }
         else 
         {
-            if (enemyAI.IsPlayerNearby)
+            if (Mathf.Abs(rb.velocity.x) < 0.8f && enemyAI.IsChasing)
             {
                 animator.SetInteger("AnimState", 1);
             }
 
-            else {
+            else if (Mathf.Abs(rb.velocity.x)< 0.8f)
+            {
                 animator.SetInteger("AnimState", 0);
             } 
         }
@@ -92,6 +111,13 @@ public class Enemy_Instant : MonoBehaviour
         currentHealth -= damage;
 
         //play hurt animation
+
+        if (m_FacingRight)
+        {
+            rb.AddForce(-pushingforce, ForceMode2D.Impulse);
+        }
+        else
+            rb.AddForce(pushingforce, ForceMode2D.Impulse);
 
         animator.SetTrigger("Hurt");
 
