@@ -17,12 +17,16 @@ public class MeleeCombat : MonoBehaviour
 
     public float attackRate = 2f;
     float nextAttackTime = 0f;
+
+  
+    
    
     int Combo = 0;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController2D>();
+        
     }
 
     void Update()
@@ -47,6 +51,7 @@ public class MeleeCombat : MonoBehaviour
             {
                 CancelInvoke("ResetCombo");
                 animator.SetTrigger("Attack2");
+                attackRange = 0.6f;
                 Attack();
                 nextAttackTime = Time.time + 1f / attackRate;
                 ResetCombo();
@@ -76,7 +81,13 @@ public class MeleeCombat : MonoBehaviour
 
     void ResetCombo()
     {
+        if(Combo == 1)
+        {
+            attackRange = 0.22f;
+        }
         Combo = 0;
+
+        
     }
     void OnDrawGizmosSelected()
     {

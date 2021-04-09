@@ -5,37 +5,28 @@ using UnityEngine;
 public class Enemy_Instant : MonoBehaviour
 {
     
-
-
     public int maxHealth = 3;
     int currentHealth;
+    public EnemyHealthBar_Script EnemyhealthBar;
+    public GameObject player;
 
     bool IsDead = false;
     
-    public EnemyHealthBar_Script EnemyhealthBar;
     EnemyAI enemyAI;
     Rigidbody2D rb;
     public Animator animator;
-    float horizontalMove;
 
     //public float attackRange = 0.5f;
     public int attackDamage = 1;
-
-    public float attackRate = 0.5f;
-    float nextAttackTime = 0f;
-
-    public Vector2 pushingforce = new Vector2(180f,0f);
-
-    private bool m_FacingRight = false;  // For determining which way the player is currently facing.
-
-    enum enemyState { Idle, CombatIdle, Run}
-
-    bool IsPatrol = false;
     
-    public bool GetFlip()
-    {
-        return m_FacingRight;
-    }
+
+    public Vector2 pushingforce = new Vector2(180f,0f); // power of pushing when gets hit
+
+   
+
+   
+    
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -48,56 +39,21 @@ public class Enemy_Instant : MonoBehaviour
 
     void FixedUpdate()
     {
-        float distanceToPlayer = Vector2.Distance(rb.position, enemyAI.player.transform.position);
 
-        if (enemyAI.IsChasing)
-        {
-            if (enemyAI.player.transform.position.x > transform.position.x && !m_FacingRight)
-            {
-                Flip();
-            }
-            else if (enemyAI.player.transform.position.x < transform.position.x && m_FacingRight)
-            {
-                Flip();
-            }
-        }
-        else if(IsPatrol)
-        {
-            if (enemyAI.path.vectorPath[0].x > transform.position.x && !m_FacingRight)
-            {
-                Flip();
-            }
-            else if (enemyAI.path.vectorPath[0].x < transform.position.x && m_FacingRight)
-            {
-                Flip();
-            }
-        }
-       
+        
 
-        if (enemyAI.IsChasing && distanceToPlayer <= 1f && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
-        {
-            if (Time.time >= nextAttackTime)
-            {
-                
-                Attack();
-                
-                nextAttackTime = Time.time + 1f / attackRate;
-            }
-            
-        }
-
-        if (Mathf.Abs(rb.velocity.x) > 1f)
+        if (Mathf.Abs(rb.velocity.x) > 0.4f)
         {
             animator.SetInteger("AnimState", 2);
         }
         else 
         {
-            if (Mathf.Abs(rb.velocity.x) < 0.8f && enemyAI.IsChasing)
+            if (Mathf.Abs(rb.velocity.x) < 0.4f && enemyAI.IsChasing)
             {
                 animator.SetInteger("AnimState", 1);
             }
 
-            else if (Mathf.Abs(rb.velocity.x)< 0.8f)
+            else if (Mathf.Abs(rb.velocity.x)< 0.4f)
             {
                 animator.SetInteger("AnimState", 0);
             } 
@@ -112,7 +68,7 @@ public class Enemy_Instant : MonoBehaviour
 
         //play hurt animation
 
-        if (m_FacingRight)
+        if (enemyAI.getFacingDir())
         {
             rb.AddForce(-pushingforce, ForceMode2D.Impulse);
         }
@@ -129,22 +85,13 @@ public class Enemy_Instant : MonoBehaviour
         }
     }
 
-    private void Flip()
-    {
-        // Switch the way the player is labelled as facing.
-        m_FacingRight = !m_FacingRight;
-        // Multiply the player's x local scale by -1.
-        Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
+    
 
-    }
-
-    public void Attack()
+    public virtual void Attack()
     {
         
         animator.SetTrigger("Attack");
-        float AttackTimeAnim = animator.recorderStopTime;
+       
 
     }
     void Die()

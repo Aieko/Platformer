@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6709992386528484099}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.248, y: 0, z: 0}
+  m_LocalPosition: {x: 0.348, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7878160341442978760}
@@ -218,6 +218,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e88c070e40d557409f29aa6c66a39da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 6
+  healthBar: {fileID: 0}
 --- !u!114 &7878160341442978762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,6 +242,8 @@ MonoBehaviour:
   m_GroundCheck: {fileID: 7878160342880875913}
   m_CeilingCheck: {fileID: 7878160342946196967}
   m_CrouchDisableCollider: {fileID: 0}
+  m_Grounded: 0
+  m_FacingRight: 1
   OnLandEvent:
     m_PersistentCalls:
       m_Calls:
@@ -289,6 +293,7 @@ MonoBehaviour:
   enemyLayers:
     serializedVersion: 2
     m_Bits: 0
+  m_enemy: {fileID: 0}
   attackRange: 0.5
   attackDamage: 40
   attackRate: 2
