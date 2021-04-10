@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-
+using System;
 using UnityEngine;
 using Pathfinding;
 
@@ -71,7 +71,6 @@ public class EnemyAI : MonoBehaviour
             else if (distanceToPlayer > 1f)
                 currentWaypoint = path.vectorPath.Count -1;
             
-
         }
     }
 
@@ -85,18 +84,29 @@ public class EnemyAI : MonoBehaviour
 
           Targeting();
 
-        if (IsChasing || IsPatrol && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt")
-         && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        try
         {
-            if (path.vectorPath[System.Math.Abs(currentWaypoint -1)].x > transform.position.x && !m_FacingRight)
+            if (IsChasing || IsPatrol
+        && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt")
+        && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")
+        && path.vectorPath.Count >= 2)
             {
-                Flip();
-            }
-            else if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x < transform.position.x && m_FacingRight)
-            {
-                Flip();
+                if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x > transform.position.x && !m_FacingRight)
+                {
+                    Flip();
+                }
+                else if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x < transform.position.x && m_FacingRight)
+                {
+                    Flip();
+                }
             }
         }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Console.WriteLine("Oh no! Something went wrong");
+            Console.WriteLine(ex);
+        }
+       
 
 
         if (IsChasing && distanceToPlayer <= distanceToStopMove && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
@@ -115,8 +125,6 @@ public class EnemyAI : MonoBehaviour
 
    void Targeting()
     {
-        
-
 
         if (currentWaypoint >= path.vectorPath.Count)
         {
@@ -165,6 +173,7 @@ public class EnemyAI : MonoBehaviour
             force.y = 0f;
 
             rb.velocity = Vector2.SmoothDamp(rb.velocity, force, ref m_Velocity, m_MovementSmoothing);
+           
 
         }
     }
@@ -194,9 +203,9 @@ public class EnemyAI : MonoBehaviour
     }
     private void Flip()
     {
-        // Switch the way the player is labelled as facing.
+        // Switch the way the enemy is labelled as facing.
         m_FacingRight = !m_FacingRight;
-        // Multiply the player's x local scale by -1.
+        // Multiply the enemy's x local scale by -1.
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
