@@ -39,9 +39,6 @@ public class Enemy_Instant : MonoBehaviour
 
     void FixedUpdate()
     {
-
-        
-
         if (Mathf.Abs(rb.velocity.x) > 0.4f)
         {
             animator.SetInteger("AnimState", 2);
@@ -92,6 +89,11 @@ public class Enemy_Instant : MonoBehaviour
         
         animator.SetTrigger("Attack");
        
+
+    }
+
+    public virtual void Jump()
+    {
 
     }
     void Die()

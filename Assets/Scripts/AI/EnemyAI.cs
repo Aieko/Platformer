@@ -12,7 +12,9 @@ public class EnemyAI : MonoBehaviour
     public float speed = 120f;
     public float nextWaypointDistance = 3f;
     public float distanceToStopMove = 0.6f;
-
+    [SerializeField] private Transform m_GroundCheck;
+    [SerializeField] private LayerMask m_WhatIsGround;
+    const float k_GroundCheckRadius = .2f; // Radius of the overlap circle to determine if grounded
     public GameObject player;
 
 
@@ -24,11 +26,18 @@ public class EnemyAI : MonoBehaviour
     public bool IsPlayerNearby { get; set; }
     private bool m_FacingRight = false;   // For determining which way the player is currently facing.
     [SerializeField] private bool CanChase = false;
+    [SerializeField] private bool CanJump = true;
+
+
     bool IsPatrol = false;
 
+    public float m_JumpForce = 200f;
     public float attackRate = 0.5f;
+    float jumpRate = 0.8f;
     float nextAttackTime = 0f;
+    float nextJumpTime = 0f;
     public float distanceToBreakChasing = 3;
+    protected float distanceToPlayer;
 
     private Vector2 m_Velocity = Vector2.zero;
 
@@ -37,7 +46,7 @@ public class EnemyAI : MonoBehaviour
     SpriteRenderer sr;
     Enemy_Instant enemy;
     Animator animator;
-    
+
 
 
     // Start is called before the first frame update
@@ -48,7 +57,7 @@ public class EnemyAI : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         enemy = GetComponent<Enemy_Instant>();
         animator = GetComponent<Animator>();
-         
+
     }
     void UpdatePath()
     {
@@ -58,38 +67,39 @@ public class EnemyAI : MonoBehaviour
 
             seeker.StartPath(StartPathPoint, player.transform.position, OnPathCompleteDelegate);
 
-         }
+        }
     }
     void OnPathCompleteDelegate(Path p)
     {
-        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+        //float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
         if (!p.error)
         {
             path = p;
-            if (rb.position.y+0.5f < player.transform.position.y)
+            if (rb.position.y + 0.5f < player.transform.position.y)
                 currentWaypoint = 2;
             else if (distanceToPlayer > 1f)
-                currentWaypoint = path.vectorPath.Count -1;
-            
+                currentWaypoint = path.vectorPath.Count - 1;
+
         }
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (path == null || enemy.animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
+        if (path == null
+         || enemy.animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt")
+         || currentWaypoint > path.vectorPath.Count)
             return;
 
-        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+        
+        distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
 
-          Targeting();
+        Targeting();
 
-        try
+        if (IsChasing || IsPatrol
+      && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt")
+      && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
         {
-            if (IsChasing || IsPatrol
-        && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt")
-        && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack")
-        && path.vectorPath.Count >= 2)
             {
                 if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x > transform.position.x && !m_FacingRight)
                 {
@@ -99,33 +109,50 @@ public class EnemyAI : MonoBehaviour
                 {
                     Flip();
                 }
-            }
+            } 
         }
-        catch (ArgumentOutOfRangeException ex)
+
+        if (Time.time >= nextAttackTime)
         {
-            Console.WriteLine("Oh no! Something went wrong");
-            Console.WriteLine(ex);
+            Attack();
         }
-       
 
-
-        if (IsChasing && distanceToPlayer <= distanceToStopMove && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
+        if (CanJump && Time.time >= nextJumpTime)
         {
-            if (Time.time >= nextAttackTime)
+            Jump();
+        }
+    }
+
+    void Jump()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundCheckRadius, m_WhatIsGround);
+
+        if (player.transform.position.y - 0.5f > this.transform.position.y)
+        {
+            for (int i = 0; i < colliders.Length; i++)
             {
-                enemy.Attack();
+                rb.AddForce(new Vector2(0f, m_JumpForce), ForceMode2D.Impulse);
 
-                nextAttackTime = Time.time + 1f / attackRate;
+                enemy.Jump();
+                nextJumpTime = Time.time + 1f / jumpRate;
             }
-
         }
+        
+    }
 
-
+    void Attack()
+    {
+            if(IsChasing 
+            && distanceToPlayer <= distanceToStopMove 
+            && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt"))
+        {
+                enemy.Attack();
+                nextAttackTime = Time.time + 1f / attackRate;
+        }
     }
 
    void Targeting()
-    {
-
+    {   
         if (currentWaypoint >= path.vectorPath.Count)
         {
             reachedEndOfPath = true;
@@ -135,9 +162,6 @@ public class EnemyAI : MonoBehaviour
         {
             reachedEndOfPath = false;
         }
-
-        float distanceToWayPoint = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
-        float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
 
         if (IsChasing && distanceToPlayer >= distanceToBreakChasing && !IsPlayerNearby)
         {
@@ -151,7 +175,9 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        if(CanChase)
+        float distanceToWayPoint = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+
+        if (CanChase)
         {
             Chasing(distanceToWayPoint);
         }
@@ -169,11 +195,9 @@ public class EnemyAI : MonoBehaviour
         {
 
             Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            Vector2 force = direction * speed;
-            force.y = 0f;
+            Vector2 force = new Vector2(direction.x * speed, rb.velocity.y);
 
-            rb.velocity = Vector2.SmoothDamp(rb.velocity, force, ref m_Velocity, m_MovementSmoothing);
-           
+            rb.velocity = force;
 
         }
     }
@@ -181,6 +205,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!enabled)
             return;
+        
         if (collision.gameObject.tag == "Player" )
         {
             IsPlayerNearby = true;
@@ -193,6 +218,7 @@ public class EnemyAI : MonoBehaviour
         }
         
     }
+
 
     private void OnTriggerExit2D(Collider2D collision)
     {
