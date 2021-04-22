@@ -7,14 +7,15 @@ using Pathfinding;
 public class EnemyAI : MonoBehaviour
 {
 
-    [Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;// How much to smooth out the movement
+    [Range(0, 1f)] [SerializeField] private float m_MovementSmoothing = .05f;// How much to smooth out the movement
     [Range(0.1f, 1f)] [SerializeField] private float PathUpdate = 0.1f;
     public float speed = 120f;
     public float nextWaypointDistance = 3f;
     public float distanceToStopMove = 0.6f;
-    [SerializeField] private Transform m_GroundCheck;
+    [SerializeField] private Transform m_GroundAheadCheck;
+    [SerializeField] private Transform m_GroundAboveCheck;
     [SerializeField] private LayerMask m_WhatIsGround;
-    const float k_GroundCheckRadius = .2f; // Radius of the overlap circle to determine if grounded
+    const float k_GroundCheckRadius = .05f; // Radius of the overlap circle to determine if grounded
     public GameObject player;
 
 
@@ -24,6 +25,7 @@ public class EnemyAI : MonoBehaviour
 
     public bool IsChasing { get; set; }
     public bool IsPlayerNearby { get; set; }
+    private bool UpDown = false;
     private bool m_FacingRight = false;   // For determining which way the player is currently facing.
     [SerializeField] private bool CanChase = false;
     [SerializeField] private bool CanJump = true;
@@ -39,7 +41,7 @@ public class EnemyAI : MonoBehaviour
     public float distanceToBreakChasing = 3;
     protected float distanceToPlayer;
 
-    private Vector2 m_Velocity = Vector2.zero;
+    private Vector3 m_Velocity = Vector3.zero;
 
     Seeker seeker;
     Rigidbody2D rb;
@@ -75,10 +77,16 @@ public class EnemyAI : MonoBehaviour
         if (!p.error)
         {
             path = p;
+
             if (rb.position.y + 0.5f < player.transform.position.y)
-                currentWaypoint = 2;
+            {
+                if (path.vectorPath.Count > 3)
+                {
+                    currentWaypoint = 3;
+                }
+            } 
             else if (distanceToPlayer > 1f)
-                currentWaypoint = path.vectorPath.Count - 1;
+            currentWaypoint = path.vectorPath.Count - 1;
 
         }
     }
@@ -96,20 +104,18 @@ public class EnemyAI : MonoBehaviour
 
         Targeting();
 
-        if (IsChasing || IsPatrol
+        if ((IsChasing || IsPatrol)
       && !animator.GetCurrentAnimatorStateInfo(0).IsName("Hurt")
       && !animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
         {
+            if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x > transform.position.x && !m_FacingRight)
             {
-                if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x > transform.position.x && !m_FacingRight)
-                {
                     Flip();
-                }
-                else if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x < transform.position.x && m_FacingRight)
-                {
+            }
+            else if (path.vectorPath[System.Math.Abs(currentWaypoint - 1)].x < transform.position.x && m_FacingRight)
+            {
                     Flip();
-                }
-            } 
+            }
         }
 
         if (Time.time >= nextAttackTime)
@@ -119,25 +125,53 @@ public class EnemyAI : MonoBehaviour
 
         if (CanJump && Time.time >= nextJumpTime)
         {
-            Jump();
+            JumpCheck();
         }
+
+
+    }
+
+    void JumpCheck()
+    {
+        Collider2D[] collidersAhead = Physics2D.OverlapCircleAll(m_GroundAheadCheck.position, k_GroundCheckRadius, m_WhatIsGround);
+        Collider2D[] collidersAbove = Physics2D.OverlapCircleAll(m_GroundAboveCheck.position, k_GroundCheckRadius, m_WhatIsGround);
+
+
+        if  (IsChasing
+             && !IsPlayerNearby
+             && player.transform.position.y - 0.5f > this.transform.position.y)
+        {
+            for (int i = 0; i < collidersAbove.Length; i++)
+            {
+
+                Chasing();
+
+            }
+            if(collidersAbove.Length == 0)
+                {
+                currentWaypoint = path.vectorPath.Count - 1;
+                Jump();
+                }
+           
+
+        }
+
+       /* else if ((IsChasing || IsPatrol) && player.transform.position.y - 0.5f > this.transform.position.y)
+        {
+            for (int i = 0; i < collidersAhead.Length; i++)
+            {
+                Jump();
+            }
+        }*/
+
     }
 
     void Jump()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundCheckRadius, m_WhatIsGround);
+        rb.AddForce(new Vector2(0f, m_JumpForce), ForceMode2D.Impulse);
 
-        if (player.transform.position.y - 0.5f > this.transform.position.y)
-        {
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                rb.AddForce(new Vector2(0f, m_JumpForce), ForceMode2D.Impulse);
-
-                enemy.Jump();
-                nextJumpTime = Time.time + 1f / jumpRate;
-            }
-        }
-        
+        enemy.Jump();
+        nextJumpTime = Time.time + 1f / jumpRate;
     }
 
     void Attack()
@@ -167,6 +201,7 @@ public class EnemyAI : MonoBehaviour
         {
             CancelInvoke("UpdatePath");
             IsChasing = false;
+            currentWaypoint = path.vectorPath.Count-(path.vectorPath.Count-1);
             return;
         }
 
@@ -179,7 +214,7 @@ public class EnemyAI : MonoBehaviour
 
         if (CanChase)
         {
-            Chasing(distanceToWayPoint);
+            Chasing();
         }
 
         if (distanceToWayPoint < nextWaypointDistance)
@@ -189,15 +224,16 @@ public class EnemyAI : MonoBehaviour
 
     }
 
-    void Chasing(float distanceToWayPoint)
+    void Chasing()
     {
         if (!reachedEndOfPath)
         {
 
             Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            Vector2 force = new Vector2(direction.x * speed, rb.velocity.y);
+            Vector2 force;
+            force = new Vector2(speed * direction.x, rb.velocity.y);
 
-            rb.velocity = force;
+            rb.velocity = Vector3.SmoothDamp(rb.velocity, force, ref m_Velocity, m_MovementSmoothing);
 
         }
     }
@@ -237,6 +273,8 @@ public class EnemyAI : MonoBehaviour
         transform.localScale = theScale;
 
     }
+
+    //                                                    ***Getters***
 
     public bool getFacingDir()
     {

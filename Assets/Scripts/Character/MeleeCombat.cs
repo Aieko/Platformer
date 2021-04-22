@@ -5,18 +5,18 @@ using UnityEngine;
 public class MeleeCombat : MonoBehaviour
 {
     public Animator animator;
-
     public Transform attackPoint;
     public LayerMask enemyLayers;
-    public Enemy_Instant m_enemy;
+    public Entity enemy;
 
     CharacterController2D controller;
 
-    public float attackRange = 0.5f;
-    public int attackDamage = 40;
+    [SerializeField] private float attackRange = 0.5f;
+    [SerializeField] private int attackDamage = 40;
+    [SerializeField] private float attackRate = 2f;
 
-    public float attackRate = 2f;
-    float nextAttackTime = 0f;
+
+    private float nextAttackTime = 0f;
 
   
     
@@ -31,13 +31,10 @@ public class MeleeCombat : MonoBehaviour
 
     void Update()
     {
-        
-
-        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time >=nextAttackTime
+        if (Input.GetKeyDown(KeyCode.Mouse0) 
+            && Time.time >=nextAttackTime
             && controller.m_Grounded)
         {
-            
-
             //Attack anim with combo trigger
             if(Combo == 0)
             {
@@ -56,7 +53,6 @@ public class MeleeCombat : MonoBehaviour
                 nextAttackTime = Time.time + 1f / attackRate;
                 ResetCombo();
             }
-
         }
 
     }
@@ -70,12 +66,7 @@ public class MeleeCombat : MonoBehaviour
           
         {
            
-            if (enemy == enemy.GetComponent<BoxCollider2D>())
-            {
-                enemy.GetComponent<Enemy_Instant>().TakeDamage(attackDamage);
-              
-            }
-  
+
         }
     }
 

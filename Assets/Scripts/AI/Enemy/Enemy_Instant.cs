@@ -39,18 +39,18 @@ public class Enemy_Instant : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (Mathf.Abs(rb.velocity.x) > 0.4f)
+        if (Mathf.Abs(rb.velocity.x) > 0.2f)
         {
             animator.SetInteger("AnimState", 2);
         }
         else 
         {
-            if (Mathf.Abs(rb.velocity.x) < 0.4f && enemyAI.IsChasing)
+            if (Mathf.Abs(rb.velocity.x) < 0.2f && enemyAI.IsChasing)
             {
                 animator.SetInteger("AnimState", 1);
             }
 
-            else if (Mathf.Abs(rb.velocity.x)< 0.4f)
+            else if (Mathf.Abs(rb.velocity.x)< 0.2f)
             {
                 animator.SetInteger("AnimState", 0);
             } 
@@ -65,12 +65,15 @@ public class Enemy_Instant : MonoBehaviour
 
         //play hurt animation
 
-        if (enemyAI.getFacingDir())
+        if (enemyAI.getFacingDir()) // true = facing right
         {
             rb.AddForce(-pushingforce, ForceMode2D.Impulse);
         }
         else
+        {
             rb.AddForce(pushingforce, ForceMode2D.Impulse);
+        }
+            
 
         animator.SetTrigger("Hurt");
 
@@ -101,12 +104,13 @@ public class Enemy_Instant : MonoBehaviour
         animator.SetBool("IsDead", true);
         IsDead = true;
 
-        this.GetComponent<CircleCollider2D>().enabled = false;
+        
         this.GetComponent<BoxCollider2D>().enabled = false;
         this.enabled = false;
         enemyAI.enabled = false;
-        enemyAI.IsChasing = false;
         EnemyhealthBar.EnableHealthBar(false);
+
+        this.GetComponent<CircleCollider2D>().enabled = false;
         rb.simulated = false;
         
 

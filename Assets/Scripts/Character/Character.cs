@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    public int maxHealth = 6;
-     int currentHealth;
+    [SerializeField] private int maxHealth = 6;
+    private int currentHealth;
 
     public HealthBar_Script healthBar;
 
