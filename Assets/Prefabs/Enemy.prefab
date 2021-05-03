@@ -25,8 +25,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1306715263400670208}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -5.886, y: -4.031, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 0.5}
   m_Children:
   - {fileID: 2488716356948724974}
   m_Father: {fileID: 0}
@@ -47,8 +47,19 @@ MonoBehaviour:
   entityData: {fileID: 11400000, guid: 58e65e1755667cb4b82b46d48545323b, type: 2}
   wallCheck: {fileID: 6162221198866948227}
   ledgeCheck: {fileID: 5942882849716335299}
+  playerCheck: {fileID: 5082031157458175067}
+  groundCheck: {fileID: 2511089237624602388}
   idleStateData: {fileID: 11400000, guid: 9aec484080836a148a426467bf5a9e22, type: 2}
   moveStateData: {fileID: 11400000, guid: aafb2b2de65430d47afa5161216e0dbc, type: 2}
+  playerDetectedData: {fileID: 11400000, guid: 7f9f88645fd7f634bad4e90e1f936f1e, type: 2}
+  chargeStateData: {fileID: 11400000, guid: 219648183eeb65e48b5a9ed02e8bf25d, type: 2}
+  lookForPlayerStateData: {fileID: 11400000, guid: 53fb433e27612d249b90f7977797ed4c,
+    type: 2}
+  meleeAttackStateData: {fileID: 11400000, guid: e839a6899dd126943a1dea7d6a487e7e,
+    type: 2}
+  stunStateData: {fileID: 11400000, guid: c886674fd724d3647873e3411401b8b7, type: 2}
+  deadStateData: {fileID: 11400000, guid: 700a2c2ec74dd40498a8d8e516c1c167, type: 2}
+  meleeAttackPosition: {fileID: 7321601374721153654}
 --- !u!1 &1691809627995658375
 GameObject:
   m_ObjectHideFlags: 0
@@ -61,7 +72,7 @@ GameObject:
   - component: {fileID: 1004201218503693034}
   - component: {fileID: 6847655664365006153}
   - component: {fileID: 3073750242151586354}
-  m_Layer: 9
+  m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,7 +92,7 @@ RectTransform:
   m_Children:
   - {fileID: 3083876640904461843}
   m_Father: {fileID: 2488716356948724974}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -148,6 +159,66 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &2371935357722620542
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2511089237624602388}
+  m_Layer: 0
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2511089237624602388
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2371935357722620542}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.081, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2488716356948724974}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2381416347785195367
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5082031157458175067}
+  m_Layer: 0
+  m_Name: PlayerCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5082031157458175067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2381416347785195367}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.72, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2488716356948724974}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3370340507263220449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +233,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slider: {fileID: 3083876640904461836}
   HealthBar: {fileID: 3083876640904461842}
+--- !u!1 &3586945901457474414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7321601374721153654}
+  m_Layer: 0
+  m_Name: MeleeAttackPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7321601374721153654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3586945901457474414}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.332, y: 0.952, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2488716356948724974}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3926173571484002850
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,7 +272,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6162221198866948227}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: WallCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +291,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2488716356948724974}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7667545384412278844
 GameObject:
@@ -201,8 +302,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5942882849716335299}
-  m_Layer: 9
-  m_Name: GroundCheck
+  m_Layer: 0
+  m_Name: LedgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -220,7 +321,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2488716356948724974}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8208612714702053507
 GameObject:
@@ -231,14 +332,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2488716356948724974}
-  - component: {fileID: 3359153884881357116}
   - component: {fileID: 780763406932359123}
   - component: {fileID: 8470958150640493004}
   - component: {fileID: 920181318558077077}
   - component: {fileID: 1447394217072884860}
-  m_Layer: 9
+  - component: {fileID: 1461957331153472745}
+  m_Layer: 0
   m_Name: Alive
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -254,28 +355,15 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 7793360097845541934}
   - {fileID: 5942882849716335299}
   - {fileID: 6162221198866948227}
-  - {fileID: 7793360097845541934}
+  - {fileID: 5082031157458175067}
+  - {fileID: 7321601374721153654}
+  - {fileID: 2511089237624602388}
   m_Father: {fileID: 1306715263400670223}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &3359153884881357116
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8208612714702053507}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 76658f0d5c3b0714ebef5826c5425142, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.02000001, y: 0.3618998}
-  serializedVersion: 2
-  m_Radius: 0.30995375
 --- !u!61 &780763406932359123
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -289,7 +377,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.025061607, y: 0.8960755}
+  m_Offset: {x: 0.025061607, y: 0.63459873}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -300,7 +388,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.44140053, y: 0.61231184}
+  m_Size: {x: 0.44140053, y: 1.1352654}
   m_EdgeRadius: 0
 --- !u!212 &8470958150640493004
 SpriteRenderer:
@@ -392,6 +480,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &1461957331153472745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8208612714702053507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd9f9b1b74c175d42b412f41fafe3b9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2678850440962586291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -407,6 +507,11 @@ PrefabInstance:
     - target: {fileID: 1144214743202004386, guid: 3d4df39a6028eac4e9ee7995e5475c48,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1144214743202004387, guid: 3d4df39a6028eac4e9ee7995e5475c48,
+        type: 3}
+      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1144214743343761568, guid: 3d4df39a6028eac4e9ee7995e5475c48,
@@ -519,10 +624,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy_HealthBar
       objectReference: {fileID: 0}
+    - target: {fileID: 1144214743343761569, guid: 3d4df39a6028eac4e9ee7995e5475c48,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1144214743343761598, guid: 3d4df39a6028eac4e9ee7995e5475c48,
         type: 3}
       propertyPath: slider
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1144214743592311541, guid: 3d4df39a6028eac4e9ee7995e5475c48,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1144214743904122049, guid: 3d4df39a6028eac4e9ee7995e5475c48,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1144214743343761598, guid: 3d4df39a6028eac4e9ee7995e5475c48, type: 3}

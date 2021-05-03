@@ -4,9 +4,23 @@ using UnityEngine;
 
 [CreateAssetMenu (fileName = "NewEntityData", menuName = "Data/Entity Data/Base Data" )]
 public class D_Entity : ScriptableObject
-{
+{   [Header("Characteristics")]
+    public float maxHealth = 30f;
+    public float damageHopSpeed = 8f;
+    public float stunResistance = 3f;
+    public float stunRecoveryTime = 2f;
+    [Header ("Checks")]
     public float wallCheckDistance = 0.2f;
     public float ledgeCheckDistance = 0.4f;
-
+    public float groundCheckRadius = 0.3f;
+    public float closeRangeActionDistance = 1.0f;
+    [Header("Vision")]
+    public float maxAgroDistance = 8f;
+    public float minAgroDistance = 7f;
+    [Header("Visuals")]
+    public GameObject hitParticle;
+   
+    [Header("Layer Masks")]
     public LayerMask whatIsGround;
+    public LayerMask whatIsPlayer;
 }

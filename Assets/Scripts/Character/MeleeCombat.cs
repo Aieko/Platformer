@@ -4,89 +4,125 @@ using UnityEngine;
 
 public class MeleeCombat : MonoBehaviour
 {
-    public Animator animator;
-    public Transform attackPoint;
-    public LayerMask enemyLayers;
-    public Entity enemy;
+    [SerializeField]
+    private float stunDamageAmount = 1f;
+    [SerializeField]
+    private bool combatEnabled;
+    [SerializeField]
+    private Transform attack1HitBoxPos;
+    [SerializeField]
+    private LayerMask whatIsDamageable;
+    [SerializeField]
+    private float inputTimer, attack1Radius, attack1Damage;
 
-    CharacterController2D controller;
+    private Animator anim;
+    private bool gotInput, isAttacking, isFirstAttack;
 
-    [SerializeField] private float attackRange = 0.5f;
-    [SerializeField] private int attackDamage = 40;
-    [SerializeField] private float attackRate = 2f;
+    private AttackDetails attackDetails;
+    private float lastInputTime = Mathf.NegativeInfinity;
 
+    private CharacterController2D PC;
 
-    private float nextAttackTime = 0f;
+    private CharacterStats PS;
 
+    private void Update()
+    {
+        CheckCombatInput();
+        CheckAttacks();
+    }
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+        anim.SetBool("canAttack", combatEnabled);
+
+        PC = GetComponent<CharacterController2D>();
+        PS = GetComponent<CharacterStats>(); //player stats
+    }
+    private void CheckCombatInput()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            if(combatEnabled)
+            {
+                gotInput = true;
+                lastInputTime = Time.time;
+            }
+        }
+
+    }
   
-    
-   
-    int Combo = 0;
-
-    private void Awake()
+    private void CheckAttacks()
     {
-        controller = GetComponent<CharacterController2D>();
-        
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0) 
-            && Time.time >=nextAttackTime
-            && controller.m_Grounded)
+        if(gotInput)
         {
-            //Attack anim with combo trigger
-            if(Combo == 0)
+            //attack
+            if(!isAttacking)
             {
-                animator.SetTrigger("Attack1");
-                Attack();
-                nextAttackTime = Time.time + 1f / attackRate;
-                Combo++;
-                InvokeRepeating("ResetCombo", 1f,0f);
-            }
-            else if(Combo == 1)
-            {
-                CancelInvoke("ResetCombo");
-                animator.SetTrigger("Attack2");
-                attackRange = 0.6f;
-                Attack();
-                nextAttackTime = Time.time + 1f / attackRate;
-                ResetCombo();
+                gotInput = false;
+                isAttacking = true;
+                isFirstAttack = !isFirstAttack;
+                anim.SetBool("attack1", true);
+                anim.SetBool("firstAttack", isFirstAttack);
+                anim.SetBool("isAttacking", isAttacking);
+
             }
         }
 
-    }
-
-   void Attack()
-    {
-        //Detect enemies in range of attack
-       Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-        foreach (Collider2D enemy in hitEnemies)
-          
+        if(Time.time >=lastInputTime + inputTimer)
         {
-           
-
+            gotInput = false;
         }
     }
 
-    void ResetCombo()
+    private void CheckAttackHitBox()
     {
-        if(Combo == 1)
+        Collider2D[] detectObjects = Physics2D.OverlapCircleAll(attack1HitBoxPos.position, attack1Radius, whatIsDamageable);
+
+        attackDetails.damageAmount = attack1Damage;
+        attackDetails.position = transform.position;
+        attackDetails.stunDamageAmount = stunDamageAmount;
+
+        Debug.Log(detectObjects.Length);
+        foreach (Collider2D collider in detectObjects)
         {
-            attackRange = 0.22f;
+            collider.transform.parent.SendMessage("Damage", attackDetails);
+
+            //hit particle
         }
-        Combo = 0;
-
-        
     }
-    void OnDrawGizmosSelected()
-    {
-        if(attackPoint == null)
-         return;
 
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-       
+    private void Damage(AttackDetails attackDetails)
+    {
+        if (!PC.GetDashStatus())
+        {
+            int direction;
+
+            PS.DecreaseHealth(attackDetails.damageAmount);
+
+            if (attackDetails.position.x < transform.position.x)
+            {
+                direction = 1;
+            }
+            else
+            {
+                direction = -1;
+            }
+
+            PC.Knockback(direction);
+        }
+    }
+    private void FinishAttack1()
+    {
+        isAttacking = false;
+
+        anim.SetBool("isAttacking", isAttacking);
+        anim.SetBool("attack1", false);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(attack1HitBoxPos.position, attack1Radius);
     }
 }
 

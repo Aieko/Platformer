@@ -25,7 +25,6 @@ public class EnemyAI : MonoBehaviour
 
     public bool IsChasing { get; set; }
     public bool IsPlayerNearby { get; set; }
-    private bool UpDown = false;
     private bool m_FacingRight = false;   // For determining which way the player is currently facing.
     [SerializeField] private bool CanChase = false;
     [SerializeField] private bool CanJump = true;
