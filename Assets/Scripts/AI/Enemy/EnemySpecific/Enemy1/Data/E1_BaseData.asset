@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: E1_BaseData
   m_EditorClassIdentifier: 
   maxHealth: 50
-  damageHopSpeed: 8
+  damageHopSpeed: 15
   stunResistance: 3
   stunRecoveryTime: 2
   wallCheckDistance: -0.2

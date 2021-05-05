@@ -43,6 +43,8 @@ public class Enemy1 : Entity
     [SerializeField]
     private Transform meleeAttackPosition;
 
+   
+    
     public override void Start()
     {
         base.Start();
@@ -55,7 +57,7 @@ public class Enemy1 : Entity
         meleeAttackState = new E1_MeleeAttackState(this, stateMachine, "meleeAttack", meleeAttackPosition, meleeAttackStateData, this);
         stunState = new E1_StunState(this, stateMachine, "stun", stunStateData, this);
         deadState = new E1_DeadState(this, stateMachine, "dead", deadStateData, this);
-
+     
         stateMachine.Initialize(idleState); 
     }
 
@@ -69,9 +71,10 @@ public class Enemy1 : Entity
     public override void Damage(AttackDetails attackDetails)
     {
         base.Damage(attackDetails);
-        
 
-        if (isDead)
+      
+
+            if (isDead)
         {
             stateMachine.ChangeState(deadState);
         }

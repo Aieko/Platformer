@@ -40,6 +40,12 @@ public class Entity : MonoBehaviour
 
     private Vector2 velocityWorkspace;
 
+    //UI
+    [SerializeField]
+    private EnemyHealthBar_Script HealthBar;
+
+
+
     public virtual void Start()
     {
         facingDirection = 1;
@@ -48,11 +54,17 @@ public class Entity : MonoBehaviour
         
 
         aliveGO = transform.Find("Alive").gameObject;
+
         rb = aliveGO.GetComponent<Rigidbody2D>();
         anim = aliveGO.GetComponent<Animator>();
         atsm = aliveGO.GetComponent<AnimationToStateMachine>();
 
         stateMachine = new FiniteStateMachine();
+
+    
+        HealthBar.SetMaxHealth(entityData.maxHealth);
+   
+
     }
 
     public virtual void Update()
@@ -116,11 +128,16 @@ public class Entity : MonoBehaviour
         currentHealth -= attackDetails.damageAmount;
         currentStunResistance -= attackDetails.stunDamageAmount;
         
-        DamageHop(entityData.damageHopSpeed);
+        DamageHop(entityData.damageHopSpeedY);
         
         Instantiate(entityData.hitParticle, aliveGO.transform.position, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)));
 
-        if(attackDetails.position.x > aliveGO.transform.position.x)
+        if (HealthBar)
+        {
+            HealthBar.SetHealth(currentHealth);
+        }
+
+        if (attackDetails.position.x > aliveGO.transform.position.x)
         {
             lastDamageDirection = -1;
         }
@@ -136,6 +153,8 @@ public class Entity : MonoBehaviour
 
         if(currentHealth <= 0 )
         {
+            aliveGO.SetActive(false);
+            HealthBar.EnableHealthBar(false);
             isDead = true;
         }
 
@@ -147,9 +166,9 @@ public class Entity : MonoBehaviour
         currentStunResistance = entityData.stunResistance;
     }
 
-    public virtual void DamageHop(float velocity)
+    public virtual void DamageHop(float velocityY)
     {
-        velocityWorkspace.Set(rb.velocity.x, velocity);
+        velocityWorkspace.Set(rb.velocity.x, velocityY);
         rb.velocity = velocityWorkspace;
     }
 
@@ -164,7 +183,13 @@ public class Entity : MonoBehaviour
 
     public virtual void SetVelocity(float velocity)
     {
+        if (velocity == 0)
+        {
+            velocityWorkspace.Set(velocity, velocity);
+        }
+        else
         velocityWorkspace.Set(facingDirection * velocity, rb.velocity.y);
+        
         rb.velocity = velocityWorkspace;
     }
 

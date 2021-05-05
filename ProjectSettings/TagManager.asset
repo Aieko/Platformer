@@ -45,14 +45,14 @@ TagManager:
   - name: Background
     uniqueID: 2291204027
     locked: 0
-  - name: Enemy
-    uniqueID: 3562755687
-    locked: 0
   - name: Platforms
     uniqueID: 1454371475
     locked: 0
   - name: Decorations
     uniqueID: 2203390473
+    locked: 0
+  - name: Enemy
+    uniqueID: 3562755687
     locked: 0
   - name: Player
     uniqueID: 928565099
