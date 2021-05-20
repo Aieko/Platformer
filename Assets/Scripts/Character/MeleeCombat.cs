@@ -39,6 +39,7 @@ public class MeleeCombat : MonoBehaviour
         PC = GetComponent<CharacterController2D>();
         PS = GetComponent<CharacterStats>(); //player stats
     }
+
     private void CheckCombatInput()
     {
         if(Input.GetMouseButtonDown(0))
@@ -85,7 +86,8 @@ public class MeleeCombat : MonoBehaviour
 
         Debug.Log(detectObjects.Length);
         foreach (Collider2D collider in detectObjects)
-        {
+        {   
+            if(collider.transform.gameObject.layer == 9)
             collider.transform.parent.SendMessage("Damage", attackDetails);
 
             //hit particle
@@ -112,6 +114,7 @@ public class MeleeCombat : MonoBehaviour
             PC.Knockback(direction);
         }
     }
+
     private void FinishAttack1()
     {
         isAttacking = false;

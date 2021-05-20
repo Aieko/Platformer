@@ -72,9 +72,16 @@ public class Enemy1 : Entity
     {
         base.Damage(attackDetails);
 
-      
 
-            if (isDead)
+        if ((facingDirection == lastDamageDirection
+           || lastDamageDirection == 0)
+           && !isStunned
+           && stateMachine.currentState != meleeAttackState)
+        {
+            Flip();
+        }
+
+        if (isDead)
         {
             stateMachine.ChangeState(deadState);
         }

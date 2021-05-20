@@ -34,6 +34,7 @@ public class CharacterController2D : MonoBehaviour
     private bool canClimbLedge = false;
     private bool ledgeDetected;
     private bool isDashing;
+    private bool canDash = true;
 
     private Vector2 ledgePosBot;
     private Vector2 ledgePos1;
@@ -42,57 +43,58 @@ public class CharacterController2D : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private CircleCollider2D cirCollider;
+    private BoxCollider2D boxCollider;
 
     public bool isGrounded { get; private set; }
 
     [Header("Movement")]
     public float movementSpeed = 10.0f;
     [Header("Jumping")]
-    public int amountOfJumps = 1;
-    public float jumpForce = 16.0f;
-    public float airDragMultiplier = 0.95f;
-    public float variableJumpHeightMultiplier = 0.5f;
-    public float movementForceInAir;
-    public float jumpTimerSet = 0.15f;
-    public float groundCheckRadius;
+    [SerializeField] private int amountOfJumps = 1;
+    [SerializeField] private float jumpForce = 16.0f;
+    [SerializeField] private float airDragMultiplier = 0.95f;
+    [SerializeField] private float variableJumpHeightMultiplier = 0.5f;
+    [SerializeField] private float movementForceInAir;
+    [SerializeField] private float jumpTimerSet = 0.15f;
+    [SerializeField] private float groundCheckRadius;
     [Header("Wall Interaction")]
-    public float wallCheckDistance;
-    public float wallSlideSpeed;
-    public float wallHopForce;
-    public float wallJumpForce;
-    public float turnTimerSet = 0.1f;
-    public float wallJumpTimerSet = 0.5f;
-    public Vector2 wallHopDirection;
-    public Vector2 wallJumpDirection;
+    [SerializeField] private float wallCheckDistance;
+    [SerializeField] private float wallSlideSpeed;
+    [SerializeField] private float wallHopForce;
+    [SerializeField] private float wallJumpForce;
+    [SerializeField] private float turnTimerSet = 0.1f;
+    [SerializeField] private float wallJumpTimerSet = 0.5f;
+    [SerializeField] private Vector2 wallHopDirection;
+    [SerializeField] private Vector2 wallJumpDirection;
     [Header("Dashing")]
-    public float dashTime;
-    public float dashSpeed;
-    public float distanceBetweenImages;
-    public float dashCoolDown;
+    [SerializeField] private float dashTime;
+    [SerializeField] private float dashSpeed;
+    [SerializeField] private float distanceBetweenImages;
+    [SerializeField] private float dashCoolDown;
     [Header("Climbing Offsets")]
-    public float ledgeClimbXOffset1 = 0f;
-    public float ledgeClimbYOffset1 = 0f;
-    public float ledgeClimbXOffset2 = 0f;
-    public float ledgeClimbYOffset2 = 0f;
+    [SerializeField] private float ledgeClimbXOffset1 = 0f;
+    [SerializeField] private float ledgeClimbYOffset1 = 0f;
+    [SerializeField] private float ledgeClimbXOffset2 = 0f;
+    [SerializeField] private float ledgeClimbYOffset2 = 0f;
     [Header("Check Objects")]
-    public Transform groundCheck;
-    public Transform wallCheck;
-    public Transform ledgeCheck;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private Transform ledgeCheck;
     [Header("Knockback")]
-    [SerializeField]
-    private float knockbackDuration;
-    [SerializeField]
-    private Vector2 knockbackSpeed;
+    [SerializeField]  private float knockbackDuration;
+    [SerializeField] private Vector2 knockbackSpeed;
     [Header("Other")]
-    public LayerMask whatIsGround;
+    [SerializeField] private LayerMask whatIsGround;
     
 
     // Start is called before the first frame update
     void Start()
     {
+        
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         cirCollider = GetComponent<CircleCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         amountOfJumpsLeft = amountOfJumps;
         wallHopDirection.Normalize();
         wallJumpDirection.Normalize();
@@ -118,6 +120,15 @@ public class CharacterController2D : MonoBehaviour
         CheckSurroundings();
     }
 
+    private void UpdateAnimations()
+    {
+        anim.SetBool("isWalking", isWalking);
+        anim.SetBool("isGrounded", isGrounded);
+        anim.SetFloat("yVelocity", rb.velocity.y);
+        anim.SetBool("isWallSliding", isWallSliding);
+    }
+
+    //Inputs and Movement
     private void CheckInput()
     {
         //Movement
@@ -164,81 +175,35 @@ public class CharacterController2D : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * variableJumpHeightMultiplier);
         }
 
-        if (Input.GetButtonDown("Dash"))
+        if (Input.GetButtonDown("Dash") && canDash)
         {
+            //check for DashCoolDown
+            if(lastDash + dashCoolDown <= Time.time)
             AttemptToDash();
         }
 
     }
 
-    public void Knockback(int direction)
+    private void ApplyMovement()
     {
-        knockback = true;
-        knockbackStartTime = Time.time;
-        rb.velocity = new Vector2(knockbackSpeed.x * direction, knockbackSpeed.y);
-    }
 
-    private void CheckKnockback()
-    {
-        if (Time.time >= knockbackStartTime + knockbackDuration && knockback)
+        if (!isGrounded && !isWallSliding && movementInputDirection == 0 && !knockback)
         {
-            knockback = false;
-            rb.velocity = new Vector2(0.0f, rb.velocity.y);
+            rb.velocity = new Vector2(rb.velocity.x * airDragMultiplier, rb.velocity.y);
         }
-    }
-
-    private void CheckIfWallSliding()
-    {
-        if (isTouchingWall && movementInputDirection == facingDirection && rb.velocity.y < 0 && !canClimbLedge)
+        else if (canMove && !knockback)
         {
-            isWallSliding = true;
+            rb.velocity = new Vector2(movementSpeed * movementInputDirection, rb.velocity.y);
         }
-        else
-        {
-            isWallSliding = false;
-        }
-    }
 
-    private void CheckLedgeClimb()
-    {
-        if (ledgeDetected && !canClimbLedge)
-        {
-            canClimbLedge = true;
-            cirCollider.enabled = false;
 
-            if (isFacingRight)
+        if (isWallSliding)
+        {
+            if (rb.velocity.y < -wallSlideSpeed)
             {
-                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
-                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+                rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
             }
-            else
-            {
-                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
-                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
-            }
-            canMove = false;
-            canFlip = false;
-
-            anim.SetBool("canClimbLedge", canClimbLedge);
         }
-
-        if (canClimbLedge)
-        {
-            transform.position = ledgePos1;
-        }
-
-
-    }
-
-    public void FinishLedgeClimb()
-    {
-        canClimbLedge = false;
-        transform.position = ledgePos2;
-        ledgeDetected = false;
-        cirCollider.enabled = true;
-        anim.SetBool("canClimbLedge", canClimbLedge);
-        canMove = true;
-        canFlip = true;
     }
 
     private void CheckSurroundings()
@@ -253,30 +218,6 @@ public class CharacterController2D : MonoBehaviour
             ledgeDetected = true;
             ledgePosBot = ledgeCheck.position;
         }
-    }
-
-    private void CheckIfCanJump()
-    {
-        if (isGrounded && rb.velocity.y <= 0.01f)
-        {
-            amountOfJumpsLeft = amountOfJumps;
-        }
-
-        if (isTouchingWall)
-        {
-            checkJumpMultiplier = false;
-            canWallJump = true;
-        }
-
-        if (amountOfJumpsLeft <= 0)
-        {
-            canNormalJump = false;
-        }
-        else
-        {
-            canNormalJump = true;
-        }
-
     }
 
     private void CheckMovementDirection()
@@ -300,14 +241,83 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
-    private void UpdateAnimations()
+    //Knockback
+    public void Knockback(int direction)
     {
-        anim.SetBool("isWalking", isWalking);
-        anim.SetBool("isGrounded", isGrounded);
-        anim.SetFloat("yVelocity", rb.velocity.y);
-        anim.SetBool("isWallSliding", isWallSliding);
+        knockback = true;
+        knockbackStartTime = Time.time;
+        rb.velocity = new Vector2(knockbackSpeed.x * direction, knockbackSpeed.y);
     }
 
+    private void CheckKnockback()
+    {
+        if (Time.time >= knockbackStartTime + knockbackDuration && knockback)
+        {
+            knockback = false;
+            rb.velocity = new Vector2(0.0f, rb.velocity.y);
+        }
+    }
+
+    //Wall Sliding
+    private void CheckIfWallSliding()
+    {
+        if (isTouchingWall && movementInputDirection == facingDirection && rb.velocity.y < 0 && !canClimbLedge)
+        {
+            isWallSliding = true;
+        }
+        else
+        {
+            isWallSliding = false;
+        }
+    }
+
+    //Ledge Climbing
+    private void CheckLedgeClimb()
+    {
+        if (ledgeDetected && !canClimbLedge)
+        {
+            canClimbLedge = true;
+            cirCollider.enabled = false;
+
+            if (isFacingRight)
+            {
+                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+            else
+            {
+                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+            }
+            canMove = false;
+            canFlip = false;
+            canDash = false;
+            
+
+            anim.SetBool("canClimbLedge", canClimbLedge);
+        }
+
+        if (canClimbLedge)
+        {
+            transform.position = ledgePos1;
+        }
+
+
+    }
+
+    public void FinishLedgeClimb()
+    {
+        canClimbLedge = false;
+        transform.position = ledgePos2;
+        ledgeDetected = false;
+        cirCollider.enabled = true;
+        anim.SetBool("canClimbLedge", canClimbLedge);
+        canMove = true;
+        canFlip = true;
+        canDash = true;
+    }
+
+    //Dashing
     private void AttemptToDash()
     {
         isDashing = true;
@@ -342,11 +352,13 @@ public class CharacterController2D : MonoBehaviour
                 isDashing = false;
                 canMove = true;
                 canFlip = true;
+                canDash = true;
             }
             
         }
     }
 
+    //Jumping
     private void CheckJump()
     {
         if (jumpTimer > 0)
@@ -420,28 +432,31 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
-    private void ApplyMovement()
+    private void CheckIfCanJump()
     {
-
-        if (!isGrounded && !isWallSliding && movementInputDirection == 0 && !knockback)
+        if (isGrounded && rb.velocity.y <= 0.01f)
         {
-            rb.velocity = new Vector2(rb.velocity.x * airDragMultiplier, rb.velocity.y);
-        }
-        else if (canMove && !knockback)
-        {
-            rb.velocity = new Vector2(movementSpeed * movementInputDirection, rb.velocity.y);
+            amountOfJumpsLeft = amountOfJumps;
         }
 
-
-        if (isWallSliding)
+        if (isTouchingWall)
         {
-            if (rb.velocity.y < -wallSlideSpeed)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, -wallSlideSpeed);
-            }
+            checkJumpMultiplier = false;
+            canWallJump = true;
         }
+
+        if (amountOfJumpsLeft <= 0)
+        {
+            canNormalJump = false;
+        }
+        else
+        {
+            canNormalJump = true;
+        }
+
     }
 
+    //Flipping
     public void DisableFlip()
     {
         canFlip = false;
@@ -462,6 +477,7 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
+    //Gizmos
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
@@ -472,7 +488,7 @@ public class CharacterController2D : MonoBehaviour
    
     }
 
-    //----GETTERS------------------------------------------
+    //------------------GETTERS-------------------------
 
     public int GetFacingDirection()
     {

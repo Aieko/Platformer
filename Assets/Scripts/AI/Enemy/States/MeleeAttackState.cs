@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeleeAttackState : AttackState
 {
-    D_MeleeAttack stateData;
+    protected D_MeleeAttack stateData;
 
     protected AttackDetails attackDetails;
 
@@ -53,9 +53,9 @@ public class MeleeAttackState : AttackState
 
         Collider2D[] detectedObjects = Physics2D.OverlapCircleAll(attackPosition.position, stateData.attackRadius, stateData.whatIsPlayer);
 
-        foreach(Collider2D collider in detectedObjects)
-        {
-            collider.transform.SendMessage("Damage", attackDetails);
-        }
+       if(detectedObjects.Length > 0)
+        detectedObjects[0].transform.SendMessage("Damage", attackDetails);
+
+        
     }
 }

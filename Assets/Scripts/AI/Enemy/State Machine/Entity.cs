@@ -71,6 +71,8 @@ public class Entity : MonoBehaviour
     {
         stateMachine.currentState.LogicUpdate();
 
+        anim.SetFloat("YVelocity", rb.velocity.y);
+
         if(Time.time >= lastDamageTime + entityData.stunRecoveryTime)
         {
             ResetStunResistance();
@@ -95,17 +97,17 @@ public class Entity : MonoBehaviour
 
     public virtual bool CheckPlayerInMinAgroRange()
     {
-        return Physics2D.Raycast(playerCheck.position, -aliveGO.transform.right, entityData.minAgroDistance, entityData.whatIsPlayer);
+        return Physics2D.Raycast(playerCheck.position, aliveGO.transform.right, entityData.minAgroDistance, entityData.whatIsPlayer);
     }
 
     public virtual bool CheckPlayerInMaxAgroRange()
     {
-        return Physics2D.Raycast(playerCheck.position, -aliveGO.transform.right, entityData.maxAgroDistance, entityData.whatIsPlayer);
+        return Physics2D.Raycast(playerCheck.position,  aliveGO.transform.right, entityData.maxAgroDistance, entityData.whatIsPlayer);
     }
 
     public virtual bool CheckPlayerInCloseRangeAction()
     {
-        return Physics2D.Raycast(playerCheck.position, -aliveGO.transform.right, entityData.closeRangeActionDistance, entityData.whatIsPlayer);
+        return Physics2D.Raycast(playerCheck.position, aliveGO.transform.right, entityData.closeRangeActionDistance, entityData.whatIsPlayer);
     }
 
     public virtual bool CheckGround()
@@ -145,6 +147,7 @@ public class Entity : MonoBehaviour
         {
             lastDamageDirection = 1;
         }
+
 
         if(currentStunResistance <= 0)
         {
@@ -188,7 +191,10 @@ public class Entity : MonoBehaviour
             velocityWorkspace.Set(velocity, velocity);
         }
         else
-        velocityWorkspace.Set(facingDirection * velocity, rb.velocity.y);
+        {
+            velocityWorkspace.Set(facingDirection * velocity, rb.velocity.y);
+        }
+        
         
         rb.velocity = velocityWorkspace;
     }
@@ -198,10 +204,10 @@ public class Entity : MonoBehaviour
         Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(Vector2.right * facingDirection * entityData.wallCheckDistance));
         Gizmos.DrawLine(ledgeCheck.position, ledgeCheck.position + (Vector3)(Vector2.down * entityData.ledgeCheckDistance));
 
-        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.closeRangeActionDistance), 0.2f);
+        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.closeRangeActionDistance * facingDirection), 0.2f);
 
-        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.minAgroDistance), 0.2f);
-        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance), 0.2f);
+        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.minAgroDistance * facingDirection), 0.2f);
+        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), 0.2f);
 
     }
 }
