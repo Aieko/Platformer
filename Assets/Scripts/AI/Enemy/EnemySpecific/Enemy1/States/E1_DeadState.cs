@@ -19,6 +19,8 @@ public class E1_DeadState : DeadState
     public override void Enter()
     {
         base.Enter();
+
+        entity.transform.gameObject.SetActive(false);
     }
 
     public override void Exit()

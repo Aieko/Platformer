@@ -5,7 +5,7 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public FiniteStateMachine stateMachine;
-
+    [Header("Base Entity")]
     public D_Entity entityData;
 
     public int facingDirection { get; private set; }
@@ -40,7 +40,7 @@ public class Entity : MonoBehaviour
 
     private Vector2 velocityWorkspace;
 
-    //UI
+    [Header("UI")]
     [SerializeField]
     private EnemyHealthBar_Script HealthBar;
 

@@ -33,7 +33,6 @@ public class CharacterController2D : MonoBehaviour
     private bool isTouchingLedge;
     private bool canClimbLedge = false;
     private bool ledgeDetected;
-    private bool isDashing;
     private bool canDash = true;
 
     private Vector2 ledgePosBot;
@@ -46,6 +45,7 @@ public class CharacterController2D : MonoBehaviour
     private BoxCollider2D boxCollider;
 
     public bool isGrounded { get; private set; }
+    public bool isDashing { get; private set; }
 
     [Header("Movement")]
     public float movementSpeed = 10.0f;
@@ -81,7 +81,7 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private Transform wallCheck;
     [SerializeField] private Transform ledgeCheck;
     [Header("Knockback")]
-    [SerializeField]  private float knockbackDuration;
+    [SerializeField] private float knockbackDuration;
     [SerializeField] private Vector2 knockbackSpeed;
     [Header("Other")]
     [SerializeField] private LayerMask whatIsGround;

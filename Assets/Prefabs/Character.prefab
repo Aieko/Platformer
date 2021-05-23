@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4125448099152348442}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.194, y: 0.203, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7878160341442978760}
@@ -54,7 +54,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6709992386528484099}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.561, y: 0, z: 0}
+  m_LocalPosition: {x: 1.04, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7878160341442978760}
@@ -92,8 +92,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7878160341442978763}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.537, y: -4.202, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7878160342880875913}
   - {fileID: 7878160342946196967}
@@ -138,8 +138,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 250680809
-  m_SortingLayer: 6
+  m_SortingLayerID: 928565099
+  m_SortingLayer: 5
   m_SortingOrder: 1
   m_Sprite: {fileID: -432674713727891427, guid: 8e56a745ec7f2c446a9cc7b53521f3eb,
     type: 3}
@@ -213,9 +213,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.51}
+  m_Offset: {x: 0, y: -0.49551344}
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.2855134
 --- !u!95 &7878160341442978764
 Animator:
   serializedVersion: 3
@@ -263,7 +263,7 @@ MonoBehaviour:
   wallJumpTimerSet: 0.5
   wallHopDirection: {x: 0, y: 0}
   wallJumpDirection: {x: 1, y: 2}
-  dashTime: 0.2
+  dashTime: 0.1
   dashSpeed: 50
   distanceBetweenImages: 0.1
   dashCoolDown: 2
@@ -274,8 +274,8 @@ MonoBehaviour:
   groundCheck: {fileID: 7878160342880875913}
   wallCheck: {fileID: 6078134416225800615}
   ledgeCheck: {fileID: 7878160342946196967}
-  knockbackDuration: 0
-  knockbackSpeed: {x: 0, y: 0}
+  knockbackDuration: 0.2
+  knockbackSpeed: {x: 10, y: 10}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256
@@ -291,13 +291,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe27cc7b448335a48a8b77e97e2777f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stunDamageAmount: 1
   combatEnabled: 1
   attack1HitBoxPos: {fileID: 4355900314949784340}
   whatIsDamageable:
     serializedVersion: 2
     m_Bits: 512
   inputTimer: 0.2
-  attack1Radius: 0.6
+  attack1Radius: 1
   attack1Damage: 10
 --- !u!114 &3194922537081832736
 MonoBehaviour:
@@ -312,8 +313,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 50
-  deathChunkParticle: {fileID: 0}
-  deathBloodParticle: {fileID: 3284326533108358890, guid: 8bf76c5347dfb944886f721dcdf22705,
+  deathChunkParticle: {fileID: 6016066703322577473, guid: 2e62a9f3ebf8c9d47ac5ba07097bfac4,
+    type: 3}
+  deathBloodParticle: {fileID: 8989094486737915426, guid: e859b2e384835944fa46c5c8d1a81a3f,
     type: 3}
   healthBar: {fileID: 2122218164329625390, guid: 4555672d7d6f4cd4fbc2a6462ddf5cf8,
     type: 3}
@@ -357,7 +359,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7878160342946196967}
   m_Layer: 11
-  m_Name: CellingCheck
+  m_Name: LedgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -371,7 +373,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7878160342946196960}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.02, y: 0.793, z: 0}
+  m_LocalPosition: {x: 0, y: 0.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7878160341442978760}

@@ -14,16 +14,19 @@ public class CharacterStats : MonoBehaviour
 
     private float currentHealth;
 
-    public HealthBar_Script healthBar;
+    private HealthBar_Script healthBar;
 
-    // private GameManager GM;
+    private GameManager GM;
 
     private void Start()
     {
-        currentHealth = maxHealth;
+        healthBar = GameObject.Find("HealthBar").GetComponent<HealthBar_Script>();
+        GM = GameObject.Find("GameManager").GetComponent<GameManager>();
 
+        currentHealth = maxHealth;
         healthBar.SetMaxHealth(currentHealth);
-        // GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        
     }
 
     public void DecreaseHealth(float amount)
@@ -42,7 +45,7 @@ public class CharacterStats : MonoBehaviour
     {
         Instantiate(deathChunkParticle, transform.position, deathChunkParticle.transform.rotation);
         Instantiate(deathBloodParticle, transform.position, deathBloodParticle.transform.rotation);
-       // GM.Respawn();
+        GM.Respawn();
         Destroy(gameObject);
     }
 

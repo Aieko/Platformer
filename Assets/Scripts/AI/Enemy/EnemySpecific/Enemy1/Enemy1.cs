@@ -21,7 +21,7 @@ public class Enemy1 : Entity
 
     public E1_DeadState deadState { get; private set; }
 
-    [Header("States")]
+    [Header("State's Data")]
     [SerializeField]
     private D_IdleState idleStateData;
     [SerializeField]
@@ -84,6 +84,7 @@ public class Enemy1 : Entity
         if (isDead)
         {
             stateMachine.ChangeState(deadState);
+            
         }
         
         else if(isStunned && stateMachine.currentState != stunState)

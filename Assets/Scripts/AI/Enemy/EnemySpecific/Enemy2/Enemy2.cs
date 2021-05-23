@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy2 : Entity
 {
+    
     public E2_IdleState idleState { get; private set; }
 
     public E2_MoveState moveState { get; private set; }
@@ -22,7 +23,7 @@ public class Enemy2 : Entity
 
     public E2_RangeAttackState rangeAttackState { get; private set; }
 
-
+    [Header("State's Data")]
     [SerializeField]
     private D_IdleState idleStateData;
     [SerializeField]
@@ -82,6 +83,7 @@ public class Enemy2 : Entity
         if (isDead)
         {
             stateMachine.ChangeState(deadState);
+            
         }
 
 

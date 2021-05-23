@@ -61,8 +61,17 @@ public class Projectile : MonoBehaviour
 
             if(damageHit)
             {
-                damageHit.transform.SendMessage("Damage", attackDetails);
-                Destroy(gameObject);
+                CharacterController2D PC = damageHit.transform.gameObject.GetComponent<CharacterController2D>();
+
+                if (PC.isDashing)
+                    return;
+                else
+                {
+                    damageHit.transform.SendMessage("Damage", attackDetails);
+                    Destroy(gameObject);
+                }
+                    
+               
             }
 
             if(groundHit)
@@ -71,6 +80,9 @@ public class Projectile : MonoBehaviour
 
                 rb.gravityScale = 0f;
                 rb.velocity = Vector2.zero;
+
+                Invoke("Destroy", 10f);
+                
             }
             if (Mathf.Abs(xStartPos - transform.position.x) >= travelDistance && !isGravityOn)
             {
@@ -82,6 +94,12 @@ public class Projectile : MonoBehaviour
 
        
     }
+
+    private void Destroy()
+    {
+        Destroy(gameObject);
+    }
+
     public void FireProjectile(float speed, float travelDistance, float damage)
     {
         this.speed = speed;
