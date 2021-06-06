@@ -4,7 +4,9 @@ using UnityEngine;
 
 [CreateAssetMenu (fileName = "NewEntityData", menuName = "Data/Entity Data/Base Data" )]
 public class D_Entity : ScriptableObject
-{   [Header("Characteristics")]
+{
+    [Header("Characteristics")]
+    public bool canBeHurt = true;
     public float maxHealth = 30f;
     public float stunResistance = 3f;
     public float stunRecoveryTime = 2f;

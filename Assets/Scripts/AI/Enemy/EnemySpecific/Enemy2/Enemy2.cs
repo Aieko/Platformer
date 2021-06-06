@@ -72,8 +72,8 @@ public class Enemy2 : Entity
     {
         base.Damage(attackDetails);
 
-        if ((facingDirection == lastDamageDirection
-          || lastDamageDirection == 0)
+        if ((facingDirection == lastHitDirection
+          || lastHitDirection == 0)
           && !isStunned
           && stateMachine.currentState != meleeAttackState)
         {

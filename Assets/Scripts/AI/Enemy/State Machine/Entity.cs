@@ -10,7 +10,7 @@ public class Entity : MonoBehaviour
 
     public int facingDirection { get; private set; }
 
-    public int lastDamageDirection { get; private set; }
+    public int lastHitDirection { get; private set; }
 
     public Rigidbody2D rb { get; private set; }
 
@@ -20,6 +20,11 @@ public class Entity : MonoBehaviour
 
     public AnimationToStateMachine atsm { get; private set; }
 
+    public bool canBeHurt { get; private set; }
+
+    public float lastHitTime { get; private set; }
+
+    public bool isGetHit { get; protected set; }
 
     [Header("Checks")]
     [SerializeField]
@@ -38,6 +43,7 @@ public class Entity : MonoBehaviour
     protected bool isStunned;
     protected bool isDead;
 
+
     private Vector2 velocityWorkspace;
 
     [Header("UI")]
@@ -48,10 +54,11 @@ public class Entity : MonoBehaviour
 
     public virtual void Start()
     {
+        isGetHit = false;
         facingDirection = 1;
         currentHealth = entityData.maxHealth;
         currentStunResistance = entityData.stunResistance;
-        
+        canBeHurt = entityData.canBeHurt;
 
         aliveGO = transform.Find("Alive").gameObject;
 
@@ -125,8 +132,23 @@ public class Entity : MonoBehaviour
 
     public virtual void Damage(AttackDetails attackDetails)
     {
-        lastDamageTime = Time.time;
+        
 
+        if (attackDetails.position.x > aliveGO.transform.position.x)
+        {
+            lastHitDirection = -1;
+        }
+        else
+        {
+            lastHitDirection = 1;
+        }
+
+        lastHitTime = Time.time;
+
+        if (!canBeHurt)
+            return;
+
+        lastDamageTime = Time.time; 
         currentHealth -= attackDetails.damageAmount;
         currentStunResistance -= attackDetails.stunDamageAmount;
         
@@ -138,16 +160,6 @@ public class Entity : MonoBehaviour
         {
             HealthBar.SetHealth(currentHealth);
         }
-
-        if (attackDetails.position.x > aliveGO.transform.position.x)
-        {
-            lastDamageDirection = -1;
-        }
-        else
-        {
-            lastDamageDirection = 1;
-        }
-
 
         if(currentStunResistance <= 0)
         {

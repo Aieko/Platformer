@@ -11,6 +11,7 @@ public class RangeAttackState : AttackState
     protected GameObject projectile;
 
     protected Projectile projectileScript;
+
  
     public RangeAttackState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, Transform attackPosition, D_RangeAttack stateData) : 
         base(entity, stateMachine, animBoolName, attackPosition)
@@ -27,8 +28,13 @@ public class RangeAttackState : AttackState
     {
         base.Enter();
 
+        
         attackDetails.damageAmount = stateData.projectileDamage;
         attackDetails.position = entity.aliveGO.transform.position;
+        
+        var angle = Mathf.Atan2(stateData.launchAngle, entity.facingDirection) * Mathf.Rad2Deg;
+       attackPosition.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
     }
 
     public override void Exit()

@@ -274,10 +274,10 @@ public class CharacterController2D : MonoBehaviour
     //Ledge Climbing
     private void CheckLedgeClimb()
     {
-        if (ledgeDetected && !canClimbLedge)
+        if (ledgeDetected && !canClimbLedge && !isGrounded)
         {
             canClimbLedge = true;
-            cirCollider.enabled = false;
+            //cirCollider.enabled = false;
 
             if (isFacingRight)
             {
@@ -302,7 +302,6 @@ public class CharacterController2D : MonoBehaviour
             transform.position = ledgePos1;
         }
 
-
     }
 
     public void FinishLedgeClimb()
@@ -310,7 +309,7 @@ public class CharacterController2D : MonoBehaviour
         canClimbLedge = false;
         transform.position = ledgePos2;
         ledgeDetected = false;
-        cirCollider.enabled = true;
+        //cirCollider?.enabled = true;
         anim.SetBool("canClimbLedge", canClimbLedge);
         canMove = true;
         canFlip = true;
@@ -485,6 +484,8 @@ public class CharacterController2D : MonoBehaviour
         Gizmos.DrawLine(ledgePos1, ledgePos2);
 
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y, wallCheck.position.z));
+
+        Gizmos.DrawLine(ledgeCheck.position, new Vector3((ledgeCheck.position.x + 1f)* facingDirection, ledgeCheck.position.y, ledgeCheck.position.z));
    
     }
 

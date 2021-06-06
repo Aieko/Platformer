@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4125448099152348442}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7878160341442978760}
@@ -72,7 +72,6 @@ GameObject:
   - component: {fileID: 7878160341442978761}
   - component: {fileID: 7878160341442978766}
   - component: {fileID: 7878160341442978767}
-  - component: {fileID: 7878160341442978739}
   - component: {fileID: 7878160341442978764}
   - component: {fileID: 7878160341442978762}
   - component: {fileID: -3874753173316420563}
@@ -187,7 +186,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 1
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.2}
+  m_Offset: {x: 0, y: -0.027801335}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -198,24 +197,8 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.4, y: 1}
+  m_Size: {x: 0.58691025, y: 1.4556026}
   m_EdgeRadius: 0
---- !u!58 &7878160341442978739
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7878160341442978763}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 76658f0d5c3b0714ebef5826c5425142, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.49551344}
-  serializedVersion: 2
-  m_Radius: 0.2855134
 --- !u!95 &7878160341442978764
 Animator:
   serializedVersion: 3
@@ -317,8 +300,6 @@ MonoBehaviour:
     type: 3}
   deathBloodParticle: {fileID: 8989094486737915426, guid: e859b2e384835944fa46c5c8d1a81a3f,
     type: 3}
-  healthBar: {fileID: 2122218164329625390, guid: 4555672d7d6f4cd4fbc2a6462ddf5cf8,
-    type: 3}
 --- !u!1 &7878160342880875914
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +354,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7878160342946196960}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.79, z: 0}
+  m_LocalPosition: {x: 0, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7878160341442978760}

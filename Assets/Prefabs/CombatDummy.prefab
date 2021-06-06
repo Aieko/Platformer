@@ -70,7 +70,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -732211609
-  m_SortingLayer: 2
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 279511022437664833, guid: 7c95d07498681d2489c6b502483293b9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -201,7 +201,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -732211609
-  m_SortingLayer: 2
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -7640968582719819219, guid: 7c95d07498681d2489c6b502483293b9,
     type: 3}
@@ -351,7 +351,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -732211609
-  m_SortingLayer: 2
+  m_SortingLayer: 4
   m_SortingOrder: 1
   m_Sprite: {fileID: 889796264374587942, guid: 7c95d07498681d2489c6b502483293b9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -451,7 +451,9 @@ MonoBehaviour:
   knockbackSpeedX: 10
   knockbackSpeedY: 5
   knockbackDuration: 0.1
-  knockbackDeathSpeedX: 15
   knockbackDeathSpeedY: 8
+  knockbackDeathSpeedX: 15
   deathTorque: 1
+  hitParticle: {fileID: 3284326533108358890, guid: be602a118247b5449b22ee259bea4df7,
+    type: 3}
   applyKnockback: 1

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03defe7a0da586d41968ccc5278cdb7c, type: 3}
   m_Name: Enemy2_IdleData
   m_EditorClassIdentifier: 
-  minIdleTime: 1
-  maxIdleTime: 2
+  minIdleTime: 2
+  maxIdleTime: 4

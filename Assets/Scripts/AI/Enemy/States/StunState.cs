@@ -24,7 +24,7 @@ public class StunState : State
         isStunTimeOver = false;
         isMovementStopped = false;
 
-        entity.SetVelocity(stateData.stunKnockbackSpeed, stateData.stunKnockbackAngle, entity.lastDamageDirection);
+        entity.SetVelocity(stateData.stunKnockbackSpeed, stateData.stunKnockbackAngle, entity.lastHitDirection);
     }
 
     public override void DoChecks()

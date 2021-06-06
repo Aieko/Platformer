@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2073272316146560267}
   - component: {fileID: 4944887691271869874}
   m_Layer: 0
-  m_Name: DeathBloodParticle
+  m_Name: BloodParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4787,7 +4787,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -732211609
-  m_SortingLayer: 2
+  m_SortingLayer: 4
   m_SortingOrder: 2
   m_RenderMode: 0
   m_SortMode: 0

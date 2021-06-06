@@ -11,11 +11,12 @@ public class AnimationToStateMachine : MonoBehaviour
 
   private void TriggerAttack()
     {
-        attackState.TriggerAttack();
+
+        attackState?.TriggerAttack();
     }
 
     private void FinishAttack()
     {
-        attackState.FinishAttack();
+        attackState?.FinishAttack();
     }
 }

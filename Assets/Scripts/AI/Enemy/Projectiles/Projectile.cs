@@ -9,27 +9,33 @@ public class Projectile : MonoBehaviour
     private float speed;
     private float travelDistance;
     private float xStartPos;
-    [SerializeField]
-    private float gravity;
-    [SerializeField]
-    private float damageRadius;
+    private float explodeTime;
+    private float startExplodingTime;
 
     private Rigidbody2D rb;
-
+    private Animator anim;
     private bool isGravityOn;
     private bool hasHitGround;
 
-    [SerializeField]
-    private LayerMask whatIsGround;
-    [SerializeField]
-    private LayerMask whatIsPlayer;
-    [SerializeField]
-    private Transform damagePosition;
+    [SerializeField] private bool shouldExplode;
+    [SerializeField] private bool shouldExplOnHit;
+    [SerializeField] private bool shouldDamOnHit;
+    [SerializeField] private float explosionRadius;
+    [SerializeField] private bool shouldStickToWalls;
+    [SerializeField] private float gravity;
+    [SerializeField] private float damageRadius;
+    [SerializeField] private LayerMask whatIsGround;
+    [SerializeField] private LayerMask whatIsPlayer;
+    [SerializeField] private Transform damagePosition;
+    
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
+        anim = GetComponent<Animator>();
+        
+        
+        
         rb.gravityScale = 0.0f;
 
         rb.velocity = transform.right * speed;
@@ -54,6 +60,7 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
+       
         if(!hasHitGround)
         {
             Collider2D damageHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsPlayer);
@@ -65,23 +72,36 @@ public class Projectile : MonoBehaviour
 
                 if (PC.isDashing)
                     return;
-                else
+
+                else if(shouldDamOnHit || shouldExplOnHit)
                 {
-                    damageHit.transform.SendMessage("Damage", attackDetails);
-                    Destroy(gameObject);
-                }
+                    if (shouldDamOnHit)
+                    {
+                        damageHit.transform.SendMessage("Damage", attackDetails);
+                    }
+
+                    if (shouldExplOnHit)
+                    {
+                        Explosion();
+                    }
                     
-               
+
+                    Destroy(gameObject);
+                }           
             }
 
             if(groundHit)
             {
                 hasHitGround = true;
 
-                rb.gravityScale = 0f;
-                rb.velocity = Vector2.zero;
+                if(shouldStickToWalls)
+                {
+                    rb.gravityScale = 0f;
+                    rb.velocity = Vector2.zero;
 
-                Invoke("Destroy", 10f);
+                    Invoke("Destroy", 10f);
+                }
+               
                 
             }
             if (Mathf.Abs(xStartPos - transform.position.x) >= travelDistance && !isGravityOn)
@@ -93,11 +113,37 @@ public class Projectile : MonoBehaviour
         }
 
        
+
+       
     }
 
     private void Destroy()
     {
         Destroy(gameObject);
+    }
+
+    public void Explosion()
+    {
+        rb.gravityScale = 0f;
+        rb.velocity = Vector2.zero;
+
+        Collider2D explosionHit = Physics2D.OverlapCircle(damagePosition.position, explosionRadius, whatIsPlayer);
+        if (explosionHit)
+        {
+            CharacterController2D PC = explosionHit.transform.gameObject.GetComponent<CharacterController2D>();
+
+            if (PC.isDashing)
+                return;
+            else
+            {
+                explosionHit.transform.SendMessage("Damage", attackDetails);
+               
+                Destroy(gameObject);
+            }
+
+
+        }
+
     }
 
     public void FireProjectile(float speed, float travelDistance, float damage)
