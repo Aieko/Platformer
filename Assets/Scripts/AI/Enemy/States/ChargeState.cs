@@ -9,6 +9,7 @@ public class ChargeState : State
     protected bool isPlayerInMinAgroRange;
     protected bool isDetectedLedge;
     protected bool isDetectedWall;
+    protected bool isPlayerInSight;
     protected bool isChargeTimeOver;
     protected bool performCloseRangeAction;
 
@@ -25,7 +26,7 @@ public class ChargeState : State
         isPlayerInMinAgroRange = entity.CheckPlayerInMinAgroRange();
         isDetectedLedge = entity.CheckLedge();
         isDetectedWall = entity.CheckWall();
-
+        isPlayerInSight = entity.CheckPlayerInSight();
         performCloseRangeAction = entity.CheckPlayerInCloseRangeAction();
     }
 

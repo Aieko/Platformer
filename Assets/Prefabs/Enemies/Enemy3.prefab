@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 5743334796244413774}
   m_Layer: 0
   m_Name: Enemy3
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -258,6 +258,7 @@ MonoBehaviour:
   blockStateData: {fileID: 11400000, guid: e99e5512a4e5d2648af5870665cfbbf9, type: 2}
   meleeAttackPosition: {fileID: 5743334795720714841}
   blockPosition: {fileID: 5743334796534449505}
+  needToCounterAttack: 0
 --- !u!1 &5743334796370613864
 GameObject:
   m_ObjectHideFlags: 0

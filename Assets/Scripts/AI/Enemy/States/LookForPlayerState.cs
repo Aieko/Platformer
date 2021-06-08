@@ -7,6 +7,7 @@ public class LookForPlayerState : State
     protected D_LookForPlayerState stateData;
 
     protected bool isPlayerInMinAgroRange;
+
     protected bool isAllTurnsDone;
     protected bool isAllTurnTimesDone;
     protected bool turnImmediately;
@@ -25,6 +26,7 @@ public class LookForPlayerState : State
         base.DoChecks();
 
         isPlayerInMinAgroRange = entity.CheckPlayerInMinAgroRange();
+        
     }
 
     public override void Enter()

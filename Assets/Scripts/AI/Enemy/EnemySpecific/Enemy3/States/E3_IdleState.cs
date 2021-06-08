@@ -29,7 +29,7 @@ public class E3_IdleState : IdleState
     {
         base.LogicUpdate();
 
-        if (isPlayerInMinAgroRange)
+        if (isPlayerInMinAgroRange && isPlayerInSight)
         {
             stateMachine.ChangeState(enemy.playerDetectedState);
         }

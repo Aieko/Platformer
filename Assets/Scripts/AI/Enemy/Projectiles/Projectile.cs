@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-       
+       //TODO make a bomb to explode on hit
         if(!hasHitGround)
         {
             Collider2D damageHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsPlayer);

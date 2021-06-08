@@ -42,7 +42,7 @@ public class E3_ChargeState : ChargeState
         else if (isChargeTimeOver)
         {
 
-            if (isPlayerInMinAgroRange)
+            if (isPlayerInMinAgroRange && isPlayerInSight)
             {
                 stateMachine.ChangeState(enemy.playerDetectedState);
             }

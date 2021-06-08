@@ -24,7 +24,7 @@ public class E1_IdleState : IdleState
     {
 
         base.LogicUpdate();
-        if (isPlayerInMinAgroRange)
+        if (isPlayerInMinAgroRange && isPlayerInSight)
         {
             stateMachine.ChangeState(enemy.playerDetectedState);
         }

@@ -39,6 +39,8 @@ public class Entity : MonoBehaviour
     private float currentHealth;
     private float currentStunResistance;
     private float lastDamageTime;
+    //layer mask for player investigation 
+    private int friendyLayer;
 
     protected bool isStunned;
     protected bool isDead;
@@ -50,7 +52,10 @@ public class Entity : MonoBehaviour
     [SerializeField]
     private EnemyHealthBar_Script HealthBar;
 
-
+    private void Awake()
+    {
+      
+    }
 
     public virtual void Start()
     {
@@ -59,7 +64,8 @@ public class Entity : MonoBehaviour
         currentHealth = entityData.maxHealth;
         currentStunResistance = entityData.stunResistance;
         canBeHurt = entityData.canBeHurt;
-
+        friendyLayer = 1 << LayerMask.NameToLayer("Damageable");
+        friendyLayer = ~friendyLayer;
         aliveGO = transform.Find("Alive").gameObject;
 
         rb = aliveGO.GetComponent<Rigidbody2D>();
@@ -94,7 +100,29 @@ public class Entity : MonoBehaviour
     //--CHECKING FUNCTIONS-----------------------------------------------------------------------
     public virtual bool CheckWall()
     {
+        
         return Physics2D.Raycast(wallCheck.position, aliveGO.transform.right, entityData.wallCheckDistance, entityData.whatIsGround);
+    }
+
+    public virtual bool CheckPlayerInSight()
+    {
+        RaycastHit2D hit;
+
+        
+        hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), friendyLayer);
+        if (hit.collider != null)
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+        return false;
+
+        
     }
 
     public virtual bool CheckLedge()
@@ -213,13 +241,14 @@ public class Entity : MonoBehaviour
 
     public virtual void OnDrawGizmos()
     {
-        Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(Vector2.right * facingDirection * entityData.wallCheckDistance));
-        Gizmos.DrawLine(ledgeCheck.position, ledgeCheck.position + (Vector3)(Vector2.down * entityData.ledgeCheckDistance));
+       // Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(Vector2.right * facingDirection * entityData.wallCheckDistance));
+       //Gizmos.DrawLine(ledgeCheck.position, ledgeCheck.position + (Vector3)(Vector2.down * entityData.ledgeCheckDistance));
+        Gizmos.DrawLine(playerCheck.position + (Vector3)(Vector2.right * facingDirection), playerCheck.position + (Vector3)(Vector2.right * facingDirection * entityData.maxAgroDistance));
 
-        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.closeRangeActionDistance * facingDirection), 0.2f);
+       // Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.closeRangeActionDistance * facingDirection), 0.2f);
 
-        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.minAgroDistance * facingDirection), 0.2f);
-        Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), 0.2f);
+      //  Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.minAgroDistance * facingDirection), 0.2f);
+        //Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), 0.2f);
 
     }
 }
