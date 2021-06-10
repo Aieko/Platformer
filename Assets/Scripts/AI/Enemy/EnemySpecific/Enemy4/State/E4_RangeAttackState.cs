@@ -56,5 +56,27 @@ public class E4_RangeAttackState : RangeAttackState
     public override void TriggerAttack()
     {
         base.TriggerAttack();
+        
+       GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if(player)
+        {   
+            float travelDistance = 0;
+            float distance = Mathf.Abs((Mathf.Abs(enemy.aliveGO.transform.position.x) - Mathf.Abs(player.transform.position.x)));
+
+            if (distance > 7.5f)
+            {
+                travelDistance = 2.2f;
+            }
+            else if (distance < 7.5f)
+            {
+                travelDistance = 1;
+
+                if (distance < 5f)
+                    travelDistance = 0;
+            }
+            projectileScript.FireProjectile(stateData.projectileSpeed, travelDistance, stateData.projectileDamage);
+        }
+       
     }
 }

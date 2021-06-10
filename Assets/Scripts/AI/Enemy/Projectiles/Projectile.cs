@@ -33,15 +33,15 @@ public class Projectile : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        
-        
-        
+
         rb.gravityScale = 0.0f;
 
         rb.velocity = transform.right * speed;
 
         isGravityOn = false;
         xStartPos = transform.position.x;
+
+        Invoke("Destroy", 10f);
     }
 
     private void Update()
@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
 
     private void FixedUpdate()
     {
-       //TODO make a bomb to explode on hit
+       
         if(!hasHitGround)
         {
             Collider2D damageHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsPlayer);
@@ -71,22 +71,23 @@ public class Projectile : MonoBehaviour
                 CharacterController2D PC = damageHit.transform.gameObject.GetComponent<CharacterController2D>();
 
                 if (PC.isDashing)
+                {
                     return;
-
+                }
+                   
                 else if(shouldDamOnHit || shouldExplOnHit)
                 {
                     if (shouldDamOnHit)
                     {
                         damageHit.transform.SendMessage("Damage", attackDetails);
+
+                        Destroy(gameObject);
                     }
 
                     if (shouldExplOnHit)
                     {
                         Explosion();
-                    }
-                    
-
-                    Destroy(gameObject);
+                    } 
                 }           
             }
 
@@ -94,15 +95,18 @@ public class Projectile : MonoBehaviour
             {
                 hasHitGround = true;
 
-                if(shouldStickToWalls)
+                if (shouldExplOnHit)
+                {
+                    Explosion();
+                }
+
+                if (shouldStickToWalls)
                 {
                     rb.gravityScale = 0f;
                     rb.velocity = Vector2.zero;
 
-                    Invoke("Destroy", 10f);
-                }
-               
-                
+                    
+                }  
             }
             if (Mathf.Abs(xStartPos - transform.position.x) >= travelDistance && !isGravityOn)
             {
@@ -110,23 +114,14 @@ public class Projectile : MonoBehaviour
 
                 rb.gravityScale = gravity;
             }
-        }
-
-       
-
-       
-    }
-
-    private void Destroy()
-    {
-        Destroy(gameObject);
+        }  
     }
 
     public void Explosion()
     {
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
-
+        
         Collider2D explosionHit = Physics2D.OverlapCircle(damagePosition.position, explosionRadius, whatIsPlayer);
         if (explosionHit)
         {
@@ -137,13 +132,15 @@ public class Projectile : MonoBehaviour
             else
             {
                 explosionHit.transform.SendMessage("Damage", attackDetails);
-               
-                Destroy(gameObject);
             }
-
 
         }
 
+        anim.SetBool("Boom", true);
+    }
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 
     public void FireProjectile(float speed, float travelDistance, float damage)

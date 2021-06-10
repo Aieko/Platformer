@@ -64,8 +64,10 @@ public class Entity : MonoBehaviour
         currentHealth = entityData.maxHealth;
         currentStunResistance = entityData.stunResistance;
         canBeHurt = entityData.canBeHurt;
+
         friendyLayer = 1 << LayerMask.NameToLayer("Damageable");
         friendyLayer = ~friendyLayer;
+
         aliveGO = transform.Find("Alive").gameObject;
 
         rb = aliveGO.GetComponent<Rigidbody2D>();
@@ -77,7 +79,6 @@ public class Entity : MonoBehaviour
     
         HealthBar.SetMaxHealth(entityData.maxHealth);
    
-
     }
 
     public virtual void Update()
@@ -96,7 +97,7 @@ public class Entity : MonoBehaviour
     {
         stateMachine.currentState.PhysicsUpdate();
     }
-
+    
     //--CHECKING FUNCTIONS-----------------------------------------------------------------------
     public virtual bool CheckWall()
     {

@@ -52,6 +52,8 @@ public class E2_RangeAttackState : RangeAttackState
     public override void TriggerAttack()
     {
         base.TriggerAttack();
+
+        projectileScript.FireProjectile(stateData.projectileSpeed, stateData.projectileTravelDistance, stateData.projectileDamage);
     }
 
     public override void FinishAttack()

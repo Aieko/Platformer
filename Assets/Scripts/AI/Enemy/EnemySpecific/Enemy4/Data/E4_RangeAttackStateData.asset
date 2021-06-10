@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: E4_RangeAttackStateData
   m_EditorClassIdentifier: 
   projectileDamage: 10
-  projectileSpeed: 11
-  projectileTravelDistance: 0
+  projectileSpeed: 14
+  projectileTravelDistance: 2
   launchAngle: 0.8
   projectile: {fileID: 6976280867297026590, guid: f28a721cbffcdd141840f577b4152daa,
     type: 3}

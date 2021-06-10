@@ -60,7 +60,7 @@ public class RangeAttackState : AttackState
 
         projectileScript = projectile.GetComponent<Projectile>();
 
-        projectileScript.FireProjectile(stateData.projectileSpeed, stateData.projectileTravelDistance, stateData.projectileDamage);
+       
     }
 
     public override void FinishAttack()

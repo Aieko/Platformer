@@ -485,7 +485,7 @@ public class CharacterController2D : MonoBehaviour
 
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y, wallCheck.position.z));
 
-        Gizmos.DrawLine(ledgeCheck.position, new Vector3((ledgeCheck.position.x + 1f)* facingDirection, ledgeCheck.position.y, ledgeCheck.position.z));
+        Gizmos.DrawLine(ledgeCheck.position, new Vector3(ledgeCheck.position.x + wallCheckDistance, ledgeCheck.position.y, ledgeCheck.position.z));
    
     }
 

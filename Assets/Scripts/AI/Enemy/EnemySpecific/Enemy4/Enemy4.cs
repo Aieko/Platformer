@@ -9,13 +9,13 @@ public class Enemy4 : Entity
     public E4_MoveState moveState { get; private set; }
 
     public E4_PlayerDetectedState playerDetectedState { get; private set; }
-    //@TODO Need a charge?
+    //TODO Need a charge?
     // public E1_ChargeState chargeState { get; private set; }
 
     public E4_LookForPlayerState lookForPlayerState { get; private set; }
 
     public E4_MeleeAttackState meleeAttackState { get; private set; }
-    //@TODO need a stun?
+    //TODO need a stun?
     //public E1_StunState stunState { get; private set; }
 
     public E4_DeadState deadState { get; private set; }

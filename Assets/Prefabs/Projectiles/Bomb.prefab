@@ -43,8 +43,7 @@ GameObject:
   - component: {fileID: 616770526047378163}
   - component: {fileID: 6879810927372031211}
   - component: {fileID: 5705305673953547674}
-  - component: {fileID: 7486215794358147015}
-  m_Layer: 10
+  m_Layer: 12
   m_Name: Bomb
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -182,19 +181,3 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!58 &7486215794358147015
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6976280867297026590}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 76658f0d5c3b0714ebef5826c5425142, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.025, y: -0.025}
-  serializedVersion: 2
-  m_Radius: 0.035

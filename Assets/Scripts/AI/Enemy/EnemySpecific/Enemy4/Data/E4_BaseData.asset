@@ -21,8 +21,8 @@ MonoBehaviour:
   ledgeCheckDistance: 0.4
   groundCheckRadius: 0.3
   closeRangeActionDistance: 2.5
-  maxAgroDistance: 10
-  minAgroDistance: 9
+  maxAgroDistance: 9
+  minAgroDistance: 8
   hitParticle: {fileID: 3284326533108358890, guid: 8bf76c5347dfb944886f721dcdf22705,
     type: 3}
   whatIsGround:
