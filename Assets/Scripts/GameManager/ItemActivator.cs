@@ -57,8 +57,8 @@ public class ItemActivator : MonoBehaviour
                 if(item.item.CompareTag("Enemy"))
                 {
                    Entity enemy = item.item.GetComponent<Entity>();
-                    char[] charsToDel = { 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_' };
-                    string currentState = enemy.stateMachine.currentState.ToString().TrimStart(charsToDel);
+                    //char[] charsToDel = { 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_' };
+                    //bool isIdleState = enemy.anim.GetBool("IdleState");
                     if (Vector3.Distance(player.transform.position, item.item.transform.position) > distanceFromPlayer)
                     {
                        
@@ -69,7 +69,7 @@ public class ItemActivator : MonoBehaviour
                         else
                         {
                             
-                            if(currentState == "IdleState")
+                            if(enemy.anim.GetBool("Idle"))
                             enemy.enabled = false;
                         }
                     }

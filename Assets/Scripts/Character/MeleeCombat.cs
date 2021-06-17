@@ -84,7 +84,6 @@ public class MeleeCombat : MonoBehaviour
         attackDetails.position = transform.position;
         attackDetails.stunDamageAmount = stunDamageAmount;
 
-        Debug.Log(detectObjects.Length);
         foreach (Collider2D collider in detectObjects)
         {   
             if(collider.transform.gameObject.layer == 9)

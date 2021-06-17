@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterController2D : MonoBehaviour
 {
-    
+
     private float movementInputDirection;
     private float jumpTimer;
     private float turnTimer;
@@ -32,8 +32,11 @@ public class CharacterController2D : MonoBehaviour
     private bool hasWallJumped;
     private bool isTouchingLedge;
     private bool canClimbLedge = false;
+    private bool canClimb = true;
     private bool ledgeDetected;
     private bool canDash = true;
+    private bool jumpOffCoroutineIsRunning;
+    private bool isInPlatform;
 
     private Vector2 ledgePosBot;
     private Vector2 ledgePos1;
@@ -42,7 +45,10 @@ public class CharacterController2D : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private CircleCollider2D cirCollider;
-    private BoxCollider2D boxCollider;
+    private BoxCollider2D playerCollider;
+    private Collider2D platformsJumpOffCollider;
+    private LayerMask playerLayer;
+
 
     public bool isGrounded { get; private set; }
     public bool isDashing { get; private set; }
@@ -80,21 +86,27 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private Transform ledgeCheck;
+    [SerializeField] private Transform platformCheck;
     [Header("Knockback")]
     [SerializeField] private float knockbackDuration;
     [SerializeField] private Vector2 knockbackSpeed;
     [Header("Other")]
     [SerializeField] private LayerMask whatIsGround;
-    
+    [SerializeField] private LayerMask whatIsPlatforms;
+    [SerializeField] private Vector2 collisionCheckBoxSize;
+   
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         cirCollider = GetComponent<CircleCollider2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        playerCollider = GetComponent<BoxCollider2D>();
+        playerLayer = LayerMask.NameToLayer("Player");
+
+
         amountOfJumpsLeft = amountOfJumps;
         wallHopDirection.Normalize();
         wallJumpDirection.Normalize();
@@ -134,7 +146,7 @@ public class CharacterController2D : MonoBehaviour
         //Movement
         movementInputDirection = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && !Input.GetKey(KeyCode.S))
         {
             if (isGrounded || (amountOfJumpsLeft > 0 && !isTouchingWall))
             {
@@ -145,6 +157,11 @@ public class CharacterController2D : MonoBehaviour
                 jumpTimer = jumpTimerSet;
                 isAttemptingToJump = true;
             }
+        }
+        //jump off
+        else if (Input.GetButtonDown("Jump") && Input.GetKey(KeyCode.S))
+        {
+            StartCoroutine("JumpOff");
         }
 
         if (Input.GetButtonDown("Horizontal") && isTouchingWall)
@@ -162,7 +179,7 @@ public class CharacterController2D : MonoBehaviour
         {
             turnTimer -= Time.deltaTime;
 
-            if (turnTimer <= 0)
+            if (turnTimer <= 0 )
             {
                 canMove = true;
                 canFlip = true;
@@ -178,8 +195,8 @@ public class CharacterController2D : MonoBehaviour
         if (Input.GetButtonDown("Dash") && canDash)
         {
             //check for DashCoolDown
-            if(lastDash + dashCoolDown <= Time.time)
-            AttemptToDash();
+            if (lastDash + dashCoolDown <= Time.time)
+                AttemptToDash();
         }
 
     }
@@ -208,12 +225,25 @@ public class CharacterController2D : MonoBehaviour
 
     private void CheckSurroundings()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 
+        if(Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround) ||
+        Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsPlatforms))
+        {
+            
+            isGrounded = true;
+        }
+       else
+        {
+            isGrounded = false;
+        }
+            
+        isInPlatform = Physics2D.OverlapBox(wallCheck.position, collisionCheckBoxSize, 0, whatIsPlatforms);
+            
         isTouchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, whatIsGround);
         isTouchingLedge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, whatIsGround);
+        
 
-        if (isTouchingWall && !isTouchingLedge && !ledgeDetected)
+        if (isTouchingWall && !isTouchingLedge && !ledgeDetected && !isInPlatform)
         {
             ledgeDetected = true;
             ledgePosBot = ledgeCheck.position;
@@ -261,7 +291,11 @@ public class CharacterController2D : MonoBehaviour
     //Wall Sliding
     private void CheckIfWallSliding()
     {
-        if (isTouchingWall && movementInputDirection == facingDirection && rb.velocity.y < 0 && !canClimbLedge)
+        if (!isGrounded 
+            && isTouchingWall 
+            && movementInputDirection == facingDirection 
+            && rb.velocity.y <= 0 
+            && !canClimbLedge)
         {
             isWallSliding = true;
         }
@@ -274,32 +308,36 @@ public class CharacterController2D : MonoBehaviour
     //Ledge Climbing
     private void CheckLedgeClimb()
     {
-        if (ledgeDetected && !canClimbLedge && !isGrounded)
+        if (canClimb)
         {
-            canClimbLedge = true;
-            //cirCollider.enabled = false;
 
-            if (isFacingRight)
+            if (ledgeDetected && !canClimbLedge && !isGrounded)
             {
-                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
-                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+                canClimbLedge = true;
+
+                if (isFacingRight)
+                {
+                    ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                    ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+                }
+                else
+                {
+                    ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
+                    ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+                }
+                canMove = false;
+                canFlip = false;
+                canDash = false;
+
+
+                anim.SetBool("canClimbLedge", canClimbLedge);
             }
-            else
+
+            if (canClimbLedge)
             {
-                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + ledgeClimbXOffset1, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset1);
-                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - ledgeClimbXOffset2, Mathf.Floor(ledgePosBot.y) + ledgeClimbYOffset2);
+                transform.position = ledgePos1;
             }
-            canMove = false;
-            canFlip = false;
-            canDash = false;
-            
 
-            anim.SetBool("canClimbLedge", canClimbLedge);
-        }
-
-        if (canClimbLedge)
-        {
-            transform.position = ledgePos1;
         }
 
     }
@@ -309,11 +347,12 @@ public class CharacterController2D : MonoBehaviour
         canClimbLedge = false;
         transform.position = ledgePos2;
         ledgeDetected = false;
-        //cirCollider?.enabled = true;
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
         anim.SetBool("canClimbLedge", canClimbLedge);
         canMove = true;
         canFlip = true;
         canDash = true;
+        isGrounded = true;
     }
 
     //Dashing
@@ -331,7 +370,7 @@ public class CharacterController2D : MonoBehaviour
     {
         if (isDashing)
         {
-            if(dashTimeLeft>0)
+            if (dashTimeLeft > 0)
             {
                 canMove = false;
                 canFlip = false;
@@ -343,23 +382,45 @@ public class CharacterController2D : MonoBehaviour
                 {
                     PlayerAfterImagePool.Instance.GetFromPool();
                     lastImageXPos = transform.position.x;
-                } 
+                }
             }
 
-            if(dashTimeLeft <= 0 || isTouchingWall)
+            if (dashTimeLeft <= 0 || isTouchingWall)
             {
                 isDashing = false;
                 canMove = true;
                 canFlip = true;
                 canDash = true;
             }
-            
+
         }
     }
 
     //Jumping
     private void CheckJump()
     {
+        //jump off
+        
+            if (rb.velocity.y > 0)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(platformCheck.position, Vector3.up, 0.5f);
+                if (hit)
+                {
+                        if (hit.collider.CompareTag("JumpOffPlatform"))
+                    {
+                        Physics2D.IgnoreLayerCollision(playerLayer, 13, true);
+                        canClimb = false;
+                    }
+                        
+                }
+            }
+            else if (rb.velocity.y <= 0 && !isInPlatform && !jumpOffCoroutineIsRunning)
+            {
+                Physics2D.IgnoreLayerCollision(playerLayer, 13, false);
+                canClimb = true;
+            }
+        
+
         if (jumpTimer > 0)
         {
             //WallJump
@@ -454,6 +515,31 @@ public class CharacterController2D : MonoBehaviour
         }
 
     }
+    //jump off
+    IEnumerator JumpOff()
+    {
+            jumpOffCoroutineIsRunning = true;
+            Collider2D collider = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsPlatforms);
+            if (collider)
+            {
+                if (collider.CompareTag("JumpOffPlatform"))
+                {
+                    canClimb = false;
+                    Physics2D.IgnoreLayerCollision(playerLayer, 13, true);
+                    yield return new WaitForSeconds(0.1f);
+
+                    yield return new WaitUntil(() => !isInPlatform);
+                    
+                    Physics2D.IgnoreLayerCollision(playerLayer, 13, false);
+                    canClimb = true;
+                    jumpOffCoroutineIsRunning = false;
+                }
+            }
+            else
+            {
+                jumpOffCoroutineIsRunning = false;
+            }
+    }
 
     //Flipping
     public void DisableFlip()
@@ -486,6 +572,8 @@ public class CharacterController2D : MonoBehaviour
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y, wallCheck.position.z));
 
         Gizmos.DrawLine(ledgeCheck.position, new Vector3(ledgeCheck.position.x + wallCheckDistance, ledgeCheck.position.y, ledgeCheck.position.z));
+
+        Gizmos.DrawCube(wallCheck.position, new Vector3(collisionCheckBoxSize.x, collisionCheckBoxSize.y, 0f));
    
     }
 
