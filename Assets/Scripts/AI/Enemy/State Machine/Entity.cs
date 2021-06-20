@@ -40,7 +40,7 @@ public class Entity : MonoBehaviour
     private float currentStunResistance;
     private float lastDamageTime;
     //layer mask for player investigation 
-    private int friendyLayer;
+    private int friendlyLayer;
 
     protected bool isStunned;
     protected bool isDead;
@@ -52,11 +52,6 @@ public class Entity : MonoBehaviour
     [SerializeField]
     private EnemyHealthBar_Script HealthBar;
 
-    private void Awake()
-    {
-      
-    }
-
     public virtual void Start()
     {
         isGetHit = false;
@@ -65,8 +60,8 @@ public class Entity : MonoBehaviour
         currentStunResistance = entityData.stunResistance;
         canBeHurt = entityData.canBeHurt;
 
-        friendyLayer = 1 << LayerMask.NameToLayer("Damageable");
-        friendyLayer = ~friendyLayer;
+        friendlyLayer = 1 << LayerMask.NameToLayer("Damageable");
+        friendlyLayer = ~friendlyLayer;
 
         aliveGO = transform.Find("Alive").gameObject;
 
@@ -107,10 +102,10 @@ public class Entity : MonoBehaviour
 
     public virtual bool CheckPlayerInSight()
     {
-        RaycastHit2D hit;
 
-        
-        hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), friendyLayer);
+
+
+        RaycastHit2D hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), friendlyLayer);
         if (hit.collider != null)
         {
             if (hit.collider.CompareTag("Player"))
