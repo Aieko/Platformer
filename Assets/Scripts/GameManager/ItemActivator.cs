@@ -21,7 +21,7 @@ public class ItemActivator : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.Find("Character");
+        player = GameObject.Find("Player");
         activatorItems = new List<ActivatorItem>();
         addList = new List<ActivatorItem>();
 

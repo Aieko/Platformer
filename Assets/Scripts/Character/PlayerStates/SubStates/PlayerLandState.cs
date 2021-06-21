@@ -1,0 +1,27 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerLandState : PlayerGroundState
+{
+    public PlayerLandState(Player player, PlayerStateMachine playerStateMachine, PlayerData playerData, string animBoolName) : base(player, playerStateMachine, playerData, animBoolName)
+    {
+
+    }
+
+    public override void LogicUpdate()
+    {
+        base.LogicUpdate();
+
+        xInput = player.InputHandler.NormInputX;
+
+        if(xInput != 0)
+        {
+            stateMachine.ChangeState(player.MoveState);
+        }
+        else if(isAnimationFinished)
+        {
+            stateMachine.ChangeState(player.IdleState);
+        }
+    }
+}
