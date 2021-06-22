@@ -13,15 +13,19 @@ public class PlayerLandState : PlayerGroundState
     {
         base.LogicUpdate();
 
-        xInput = player.InputHandler.NormInputX;
+        
 
-        if(xInput != 0)
+        if(!isExitingState)
         {
-            stateMachine.ChangeState(player.MoveState);
+            if (xInput != 0)
+            {
+                stateMachine.ChangeState(player.MoveState);
+            }
+            else if (isAnimationFinished)
+            {
+                stateMachine.ChangeState(player.IdleState);
+            }
         }
-        else if(isAnimationFinished)
-        {
-            stateMachine.ChangeState(player.IdleState);
-        }
+      
     }
 }

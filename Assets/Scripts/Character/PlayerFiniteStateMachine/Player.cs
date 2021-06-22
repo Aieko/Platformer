@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     public PlayerWallSlideState WallSlideState { get; private set; }
     public PlayerWallGrabState WallGrabState { get; private set; }
     public PlayerWallClimbState WallClimbState { get; private set; }
+    public PlayerWallJumpState WallJumpState { get; private set; }
+    public PlayerLedgeClimbState LedgeClimbState { get; private set; }
 
     [SerializeField,Header("Data")]
     private PlayerData playerData;
@@ -36,6 +38,7 @@ public class Player : MonoBehaviour
     [Header("Check Tranforms")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Transform wallCheck;
+    [SerializeField] private Transform ledgeCheck;
     #endregion
 
     #region Private Verialbes
@@ -58,6 +61,8 @@ public class Player : MonoBehaviour
         WallSlideState = new PlayerWallSlideState(this, StateMachine, playerData, "WallSlide");
         WallGrabState = new PlayerWallGrabState(this, StateMachine, playerData, "WallGrab");
         WallClimbState = new PlayerWallClimbState(this, StateMachine, playerData, "WallClimb");
+        WallJumpState = new PlayerWallJumpState(this, StateMachine, playerData, "InAir");
+        LedgeClimbState = new PlayerLedgeClimbState(this, StateMachine, playerData, "LedgeClimbState");
 
     }
 
@@ -94,6 +99,21 @@ public class Player : MonoBehaviour
         RB.velocity = workspace;
         CurrentVelocity = workspace;
     }
+
+    public void SetVelocity(float velocity, Vector2 angle, int direction)
+    {
+        angle.Normalize();
+
+        workspace.Set(angle.x * direction * velocity, angle.y * velocity);
+        RB.velocity = workspace;
+        CurrentVelocity = workspace;
+    }
+
+    public void SetVelocityZero()
+    {
+        RB.velocity = Vector2.zero;
+        CurrentVelocity = Vector2.zero;
+    }
     #endregion
 
     #region Check Functions
@@ -110,9 +130,14 @@ public class Player : MonoBehaviour
 
     public bool CheckIfTouchingWall() => Physics2D.Raycast(wallCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
 
+    public bool CheckIfTouchingWallBack() => Physics2D.Raycast(wallCheck.position, Vector2.right * -FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+
+    public bool CheckIfTouchingLedge() => Physics2D.Raycast(ledgeCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+
     #endregion
 
     #region Other Functions
+
     private void Flip()
     {
         FacingDirection *= -1;
@@ -122,6 +147,23 @@ public class Player : MonoBehaviour
     private void AnimationTrigger() => StateMachine.currentState.AnimationTrigger();
 
     private void AnimationFinishTrigger() => StateMachine.currentState.AnimationFinishTrigger();
+
+    public Vector2 DetermineCornerPosition()
+    {
+        RaycastHit2D xHit = Physics2D.Raycast(wallCheck.position, Vector2.right * FacingDirection, playerData.wallCheckDistance, playerData.whatIsGround);
+
+        float xDist = xHit.distance;
+
+        workspace.Set(xDist * FacingDirection, 0f);
+
+        RaycastHit2D yHit = Physics2D.Raycast(ledgeCheck.position + (Vector3)(workspace), Vector2.down, ledgeCheck.position.y - wallCheck.position.y, playerData.whatIsGround);
+
+        float yDist = yHit.distance;
+
+        workspace.Set(wallCheck.position.x + (xDist * FacingDirection), ledgeCheck.position.y - yDist);
+
+        return workspace;
+    }
 
     #endregion
 
