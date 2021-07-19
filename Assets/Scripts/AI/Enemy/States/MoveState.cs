@@ -20,8 +20,8 @@ public class MoveState : State
     {
         base.DoChecks();
 
-        isDetectingLedge = entity.CheckLedge();
-        isDetectingWall = entity.CheckWall();
+        isDetectingLedge = core.CollisionSenses.TouchingLedgeVertical;
+        isDetectingWall = core.CollisionSenses.TouchingWallFront;
         isPlayerInMinAgroRange = entity.CheckPlayerInMinAgroRange();
         isPlayerInSight = entity.CheckPlayerInSight();
     }
@@ -30,7 +30,7 @@ public class MoveState : State
     {
         base.Enter();
 
-        entity.SetVelocity(stateData.movementSpeed);
+       core.Movement.SetVelocityX(stateData.movementSpeed * core.Movement.FacingDirection);
   
     }
 

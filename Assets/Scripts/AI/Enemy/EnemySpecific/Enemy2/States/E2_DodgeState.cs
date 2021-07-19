@@ -33,7 +33,7 @@ public class E2_DodgeState : DodgeState
 
         if(isDodgeOver)
         {
-            entity.SetVelocity(0);
+            core.Movement.SetVelocityX(0);
 
             if(isPlayerInMaxAgroRange && performCloseRangeAction)
             {

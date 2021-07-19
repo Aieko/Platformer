@@ -30,10 +30,10 @@ public class BlockState : State
         base.DoChecks();
 
         performCloseRangeAction = entity.CheckPlayerInCloseRangeAction();
-        isDetectedLedge = entity.CheckLedge();
-        isDetectedWall = entity.CheckWall();
+        isDetectedLedge = core.CollisionSenses.TouchingLedgeVertical;
+        isDetectedWall = core.CollisionSenses.TouchingWallFront;
         isPlayerInMinAgroRange = entity.CheckPlayerInMinAgroRange();
-        isGrounded = entity.CheckGround();
+        isGrounded = core.CollisionSenses.CheckIfGrounded();
 
     }
 
@@ -45,11 +45,11 @@ public class BlockState : State
 
         if (stateData.shouldStay)
         {
-            entity.SetVelocity(0.0f);
+           core.Movement.SetVelocityX(0.0f);
         }
         else
         {
-            entity.SetVelocity(stateData.speedWhileBlock);
+           core.Movement.SetVelocityX(stateData.speedWhileBlock * core.Movement.FacingDirection);
         }
 
     }

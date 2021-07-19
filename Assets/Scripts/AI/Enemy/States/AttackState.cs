@@ -29,7 +29,7 @@ public class AttackState : State
 
         entity.atsm.attackState = this;
 
-        entity.SetVelocity(0f);
+       core.Movement.SetVelocityX(0f);
     }
 
     public override void Exit()

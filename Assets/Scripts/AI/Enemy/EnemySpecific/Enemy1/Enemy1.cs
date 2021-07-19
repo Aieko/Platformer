@@ -45,9 +45,9 @@ public class Enemy1 : Entity
 
    
     
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         moveState = new E1_MoveState(this, stateMachine, "move", moveStateData, this);
         idleState = new E1_IdleState(this, stateMachine, "Idle", idleStateData, this);
@@ -73,12 +73,12 @@ public class Enemy1 : Entity
         base.Damage(attackDetails);
 
 
-        if ((facingDirection == lastHitDirection
+        if ((Core.Movement.FacingDirection == lastHitDirection
            || lastHitDirection == 0)
            && !isStunned
            && stateMachine.currentState != meleeAttackState)
         {
-            Flip();
+            Core.Movement.Flip();
         }
 
         if (isDead)

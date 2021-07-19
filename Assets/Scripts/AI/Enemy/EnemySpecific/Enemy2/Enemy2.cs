@@ -51,9 +51,9 @@ public class Enemy2 : Entity
     private Transform rangeAttackPosition;
 
 
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         moveState = new E2_MoveState(this, stateMachine, "Move", moveStateData, this);
         idleState = new E2_IdleState(this, stateMachine, "Idle", idleStateData, this);
@@ -72,12 +72,12 @@ public class Enemy2 : Entity
     {
         base.Damage(attackDetails);
 
-        if ((facingDirection == lastHitDirection
+        if ((Core.Movement.FacingDirection == lastHitDirection
           || lastHitDirection == 0)
           && !isStunned
           && stateMachine.currentState != meleeAttackState)
         {
-            Flip();
+            Core.Movement.Flip();
         }
 
         if (isDead)

@@ -4,21 +4,21 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    public FiniteStateMachine stateMachine;
+    
     [Header("Base Entity")]
     public D_Entity entityData;
 
-    public int facingDirection { get; private set; }
 
-    public int lastHitDirection { get; private set; }
-
-    public Rigidbody2D rb { get; private set; }
-
+    #region Components
     public Animator anim { get; private set; }
 
-    public GameObject aliveGO { get; private set; }
-
     public AnimationToStateMachine atsm { get; private set; }
+
+    public Core Core { get; private set; }
+
+    public FiniteStateMachine stateMachine { get; private set; }
+
+    #endregion
 
     public bool canBeHurt { get; private set; }
 
@@ -26,15 +26,12 @@ public class Entity : MonoBehaviour
 
     public bool isGetHit { get; protected set; }
 
+    public int lastHitDirection { get; private set; }
+
+
     [Header("Checks")]
     [SerializeField]
-    private Transform wallCheck;
-    [SerializeField]
-    private Transform ledgeCheck;
-    [SerializeField]
     private Transform playerCheck;
-    [SerializeField]
-    private Transform groundCheck;
 
     private float currentHealth;
     private float currentStunResistance;
@@ -52,10 +49,9 @@ public class Entity : MonoBehaviour
     [SerializeField]
     private EnemyHealthBar_Script HealthBar;
 
-    public virtual void Start()
+    public virtual void Awake()
     {
         isGetHit = false;
-        facingDirection = 1;
         currentHealth = entityData.maxHealth;
         currentStunResistance = entityData.stunResistance;
         canBeHurt = entityData.canBeHurt;
@@ -63,11 +59,9 @@ public class Entity : MonoBehaviour
         friendlyLayer = 1 << LayerMask.NameToLayer("Damageable");
         friendlyLayer = ~friendlyLayer;
 
-        aliveGO = transform.Find("Alive").gameObject;
-
-        rb = aliveGO.GetComponent<Rigidbody2D>();
-        anim = aliveGO.GetComponent<Animator>();
-        atsm = aliveGO.GetComponent<AnimationToStateMachine>();
+        anim = GetComponent<Animator>();
+        atsm = GetComponent<AnimationToStateMachine>();
+        Core = GetComponentInChildren<Core>();
 
         stateMachine = new FiniteStateMachine();
 
@@ -80,7 +74,7 @@ public class Entity : MonoBehaviour
     {
         stateMachine.currentState.LogicUpdate();
 
-        anim.SetFloat("YVelocity", rb.velocity.y);
+        anim.SetFloat("YVelocity", Core.Movement.RB.velocity.y);
 
         if(Time.time >= lastDamageTime + entityData.stunRecoveryTime)
         {
@@ -94,18 +88,10 @@ public class Entity : MonoBehaviour
     }
     
     //--CHECKING FUNCTIONS-----------------------------------------------------------------------
-    public virtual bool CheckWall()
-    {
-        
-        return Physics2D.Raycast(wallCheck.position, aliveGO.transform.right, entityData.wallCheckDistance, entityData.whatIsGround);
-    }
-
+ 
     public virtual bool CheckPlayerInSight()
     {
-
-
-
-        RaycastHit2D hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), friendlyLayer);
+        RaycastHit2D hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * Core.Movement.FacingDirection), friendlyLayer);
         if (hit.collider != null)
         {
             if (hit.collider.CompareTag("Player"))
@@ -116,49 +102,29 @@ public class Entity : MonoBehaviour
                 return false;
         }
         else
-        return false;
-
-        
-    }
-
-    public virtual bool CheckLedge()
-    {
-        return Physics2D.Raycast(ledgeCheck.position, Vector2.down, entityData.ledgeCheckDistance, entityData.whatIsGround); ;
+        return false; 
     }
 
     public virtual bool CheckPlayerInMinAgroRange()
     {
-        return Physics2D.Raycast(playerCheck.position, aliveGO.transform.right, entityData.minAgroDistance, entityData.whatIsPlayer);
+        return Physics2D.Raycast(playerCheck.position, transform.right, entityData.minAgroDistance, entityData.whatIsPlayer);
     }
 
     public virtual bool CheckPlayerInMaxAgroRange()
     {
-        return Physics2D.Raycast(playerCheck.position,  aliveGO.transform.right, entityData.maxAgroDistance, entityData.whatIsPlayer);
+        return Physics2D.Raycast(playerCheck.position,  transform.right, entityData.maxAgroDistance, entityData.whatIsPlayer);
     }
 
     public virtual bool CheckPlayerInCloseRangeAction()
     {
-        return Physics2D.Raycast(playerCheck.position, aliveGO.transform.right, entityData.closeRangeActionDistance, entityData.whatIsPlayer);
+        return Physics2D.Raycast(playerCheck.position, transform.right, entityData.closeRangeActionDistance, entityData.whatIsPlayer);
     }
 
-    public virtual bool CheckGround()
-    {
-        return Physics2D.OverlapCircle(groundCheck.position, entityData.groundCheckRadius, entityData.whatIsGround);
-    }
     //--OTHER FUNCTIONS-------------------------------------------------------------------------------
-
-    public virtual void Flip()
-    {
-        facingDirection *= -1;
-
-        aliveGO.transform.Rotate(0f, 180f, 0f);
-    }
 
     public virtual void Damage(AttackDetails attackDetails)
     {
-        
-
-        if (attackDetails.position.x > aliveGO.transform.position.x)
+        if (attackDetails.position.x > transform.position.x)
         {
             lastHitDirection = -1;
         }
@@ -178,7 +144,7 @@ public class Entity : MonoBehaviour
         
         DamageHop(entityData.damageHopSpeedY);
         
-        Instantiate(entityData.hitParticle, aliveGO.transform.position, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)));
+        Instantiate(entityData.hitParticle, transform.position, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)));
 
         if (HealthBar)
         {
@@ -192,7 +158,7 @@ public class Entity : MonoBehaviour
 
         if(currentHealth <= 0 )
         {
-            aliveGO.SetActive(false);
+            gameObject.SetActive(false);
             HealthBar.EnableHealthBar(false);
             isDead = true;
         }
@@ -207,44 +173,25 @@ public class Entity : MonoBehaviour
 
     public virtual void DamageHop(float velocityY)
     {
-        velocityWorkspace.Set(rb.velocity.x, velocityY);
-        rb.velocity = velocityWorkspace;
+        velocityWorkspace.Set(Core.Movement.RB.velocity.x, velocityY);
+        Core.Movement.RB.velocity = velocityWorkspace;
     }
 
-    public virtual void SetVelocity(float velocity, Vector2 angle, int direction)
-    {
-        angle.Normalize();
-
-        velocityWorkspace.Set(angle.x * velocity * direction, angle.y * velocity);
-        rb.velocity = velocityWorkspace;
-
-    }
-
-    public virtual void SetVelocity(float velocity)
-    {
-        if (velocity == 0)
-        {
-            velocityWorkspace.Set(velocity, velocity);
-        }
-        else
-        {
-            velocityWorkspace.Set(facingDirection * velocity, rb.velocity.y);
-        }
-        
-        
-        rb.velocity = velocityWorkspace;
-    }
+  
 
     public virtual void OnDrawGizmos()
     {
-       // Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(Vector2.right * facingDirection * entityData.wallCheckDistance));
-       //Gizmos.DrawLine(ledgeCheck.position, ledgeCheck.position + (Vector3)(Vector2.down * entityData.ledgeCheckDistance));
-        Gizmos.DrawLine(playerCheck.position + (Vector3)(Vector2.right * facingDirection), playerCheck.position + (Vector3)(Vector2.right * facingDirection * entityData.maxAgroDistance));
+        /*
+        if(Core)
+        {
+             Gizmos.DrawLine(wallCheck.position, wallCheck.position + (Vector3)(Vector2.right * Core.Movement.FacingDirection * entityData.wallCheckDistance));
+            Gizmos.DrawLine(ledgeCheck.position, ledgeCheck.position + (Vector3)(Vector2.down * entityData.ledgeCheckDistance));
+            Gizmos.DrawLine(playerCheck.position + (Vector3)(Vector2.right * Core.Movement.FacingDirection), playerCheck.position + (Vector3)(Vector2.right * Core.Movement.FacingDirection * entityData.maxAgroDistance));
 
-       // Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.closeRangeActionDistance * facingDirection), 0.2f);
+             Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.closeRangeActionDistance * Core.Movement.FacingDirection), 0.2f);
 
-      //  Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.minAgroDistance * facingDirection), 0.2f);
-        //Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * facingDirection), 0.2f);
-
+             Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.minAgroDistance * Core.Movement.FacingDirection), 0.2f);
+            Gizmos.DrawWireSphere(playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * Core.Movement.FacingDirection), 0.2f);
+        }*/
     }
 }

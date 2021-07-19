@@ -9,6 +9,8 @@ public class State
 
     public float startTime { get; protected set; }
 
+    protected Core core;
+
     protected string animBoolName;
 
     public State(Entity entity, FiniteStateMachine stateMachine, string animBoolName)
@@ -16,7 +18,7 @@ public class State
         this.entity = entity;
         this.stateMachine = stateMachine;
         this.animBoolName = animBoolName;
-
+        core = entity.Core;
     }
 
     public virtual void Enter()

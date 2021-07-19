@@ -58,9 +58,9 @@ public class Enemy3 : Entity
 
     private int provokeToBlock = 0;
 
-    public override void Start()
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         moveState = new E3_MoveState(this, stateMachine, "Move", moveStateData, this);
         idleState = new E3_IdleState(this, stateMachine, "Idle", idleStateData, this);
@@ -77,7 +77,7 @@ public class Enemy3 : Entity
 
     public override void Damage(AttackDetails attackDetails)
     {
-        if (attackDetails.position.x > aliveGO.transform.position.x)
+        if (attackDetails.position.x > transform.position.x)
         {
             hitDirection = -1;
         }
@@ -86,19 +86,19 @@ public class Enemy3 : Entity
             hitDirection = 1;
         }
 
-        if ((facingDirection == hitDirection)
+        if ((Core.Movement.FacingDirection == hitDirection)
            && stateMachine.currentState != meleeAttackState
            && stateMachine.currentState != blockState)
         {
-            Flip();
+            Core.Movement.Flip();
         }
 
         if (stateMachine.currentState == blockState
-            && facingDirection != hitDirection)
+            && Core.Movement.FacingDirection != hitDirection)
         {
             blockState.Blocked();
         }   
-        else if (stateMachine.currentState != blockState && facingDirection != hitDirection)
+        else if (stateMachine.currentState != blockState && Core.Movement.FacingDirection != hitDirection)
         {
                 base.Damage(attackDetails);
 
@@ -113,11 +113,11 @@ public class Enemy3 : Entity
                 provokeToBlock++;
                 needToCounterAttack = true; 
         }
-        else if (facingDirection == hitDirection)
+        else if (Core.Movement.FacingDirection == hitDirection)
         {
             base.Damage(attackDetails);
 
-            Flip();
+            Core.Movement.Flip();
         }
 
         if (isDead)

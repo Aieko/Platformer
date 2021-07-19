@@ -62,7 +62,7 @@ public class E4_RangeAttackState : RangeAttackState
         if(player)
         {   
             float travelDistance = 0;
-            float distance = Mathf.Abs((Mathf.Abs(enemy.aliveGO.transform.position.x) - Mathf.Abs(player.transform.position.x)));
+            float distance = Mathf.Abs((Mathf.Abs(enemy.transform.position.x) - Mathf.Abs(player.transform.position.x)));
 
             if (distance > 7.5f)
             {

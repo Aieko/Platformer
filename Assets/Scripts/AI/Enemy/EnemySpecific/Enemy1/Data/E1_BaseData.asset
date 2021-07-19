@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2c9f6ab21c17546b5ea8f11047d439, type: 3}
   m_Name: E1_BaseData
   m_EditorClassIdentifier: 
+  canBeHurt: 1
   maxHealth: 70
   stunResistance: 3
   stunRecoveryTime: 2
   damageHopSpeedY: 8
-  wallCheckDistance: 0.2
+  wallCheckDistance: 0.5
   ledgeCheckDistance: 0.4
   groundCheckRadius: 0.3
   closeRangeActionDistance: 1

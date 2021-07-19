@@ -30,9 +30,9 @@ public class RangeAttackState : AttackState
 
         
         attackDetails.damageAmount = stateData.projectileDamage;
-        attackDetails.position = entity.aliveGO.transform.position;
+        attackDetails.position = entity.transform.position;
         
-        var angle = Mathf.Atan2(stateData.launchAngle, entity.facingDirection) * Mathf.Rad2Deg;
+        var angle = Mathf.Atan2(stateData.launchAngle, core.Movement.FacingDirection) * Mathf.Rad2Deg;
        attackPosition.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
     }

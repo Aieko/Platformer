@@ -21,8 +21,8 @@ public class DeadState : State
         
         if(stateData.deathBloodParticles && stateData.deathChunkParticles)
         {
-            GameObject.Instantiate(stateData.deathBloodParticles, entity.aliveGO.transform.position, stateData.deathBloodParticles.transform.rotation);
-            GameObject.Instantiate(stateData.deathChunkParticles, entity.aliveGO.transform.position, stateData.deathChunkParticles.transform.rotation);
+            GameObject.Instantiate(stateData.deathBloodParticles, entity.transform.position, stateData.deathBloodParticles.transform.rotation);
+            GameObject.Instantiate(stateData.deathChunkParticles, entity.transform.position, stateData.deathChunkParticles.transform.rotation);
         }
         entity.enabled = false;
     }

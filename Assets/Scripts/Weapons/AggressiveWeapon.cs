@@ -1,0 +1,67 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
+
+public class AggressiveWeapon : Weapon
+{
+    private List<IDamageable> detectedDamageable = new List<IDamageable>();
+
+    protected SO_AggressiveWeaponData aggressiveWeaponData;
+
+    public override void AnimationActionTrigger()
+    {
+        base.AnimationActionTrigger();
+
+        CheckMeleeAttack();
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if(weaponData.GetType() == typeof(SO_AggressiveWeaponData))
+        {
+            aggressiveWeaponData = (SO_AggressiveWeaponData)weaponData;
+        }
+        else
+        {
+            Debug.LogError("Wrong Data for Weapon");
+        }
+    }
+
+    private void CheckMeleeAttack()
+    {
+        WeaponAttackDetails details = aggressiveWeaponData.AttackDetails[attackCounter];
+
+        foreach(IDamageable item in detectedDamageable.ToList())
+        {
+            item.Damage(details.damageAmount);
+        }
+    }
+
+    public void AddToDetected(Collider2D collision)
+    {
+        IDamageable damageable = collision.GetComponent<IDamageable>();
+
+        if(damageable != null)
+        {
+            detectedDamageable.Add(damageable);
+
+
+        }
+    }
+
+    public void RemoveFromDetected(Collider2D collision)
+    {
+        IDamageable damageable = collision.GetComponent<IDamageable>();
+
+        
+
+        if (damageable != null)
+        {
+            detectedDamageable.Remove(damageable);
+       
+        }
+    }
+}
