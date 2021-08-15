@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerAttackState : PlayerAbilityState
+﻿public class PlayerAttackState : PlayerAbilityState
 {
     private Weapon weapon;
 
@@ -23,8 +19,8 @@ public class PlayerAttackState : PlayerAbilityState
         base.Enter();
 
         setVelocity = false;
-        if(weapon)
-        weapon.EnterWeapon();
+
+        if(weapon) weapon.EnterWeapon();
     }
 
     public override void LogicUpdate()
@@ -47,8 +43,8 @@ public class PlayerAttackState : PlayerAbilityState
     public override void Exit()
     {
         base.Exit();
-        if(weapon)
-        weapon.ExitWeapon();
+
+        if(weapon) weapon.ExitWeapon();
     }
 
     public void SetWeapon(Weapon weapon)

@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class PlayerStateMachine
 {
     public PlayerState currentState { get; private set; }
+
+    public PlayerState previousState { get; private set; }
 
     public void Initialize(PlayerState startingState)
     {
@@ -14,9 +15,14 @@ public class PlayerStateMachine
 
     public void ChangeState(PlayerState newState)
     {
+        previousState = currentState;
+       
         currentState.Exit();
         currentState = newState;
+        
         currentState.Enter();
     }
+
+
 
 }

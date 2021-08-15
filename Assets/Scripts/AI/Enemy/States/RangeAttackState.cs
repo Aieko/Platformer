@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RangeAttackState : AttackState
 {
@@ -59,8 +57,7 @@ public class RangeAttackState : AttackState
         projectile = GameObject.Instantiate(stateData.projectile, attackPosition.position, attackPosition.rotation);
 
         projectileScript = projectile.GetComponent<Projectile>();
-
-       
+  
     }
 
     public override void FinishAttack()

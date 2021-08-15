@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewLookForPlayerStateData", menuName = "Data/State Data/Look For Player State")]
 public class D_LookForPlayerState :ScriptableObject

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E2_MoveState : MoveState
+﻿public class E2_MoveState : MoveState
 {
     Enemy2 enemy;
 

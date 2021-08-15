@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy3 : Entity
 
@@ -72,6 +70,11 @@ public class Enemy3 : Entity
         chargeState = new E3_ChargeState(this, stateMachine, "Charge", chargeStateData, this);
         blockState = new E3_BlockState(this, stateMachine, "Block", blockStateData, blockPosition, this);
 
+        
+    }
+
+    private void Start()
+    {
         stateMachine.Initialize(idleState);
     }
 

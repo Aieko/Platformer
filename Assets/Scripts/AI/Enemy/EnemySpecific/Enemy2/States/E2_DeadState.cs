@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E2_DeadState : DeadState
+﻿public class E2_DeadState : DeadState
 {
     Enemy2 enemy;
 

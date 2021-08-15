@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerInputHandler : MonoBehaviour
 {
     private PlayerInput playerInput;
 
     private Camera cam;
+
+    private GameObject gameMenu;
 
     public Vector2 RawDashDirectionInput { get; private set; }
 
@@ -32,6 +33,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     public bool[] AttackInputs { get; private set; }
 
+    public bool isGamePaused;
+
     [SerializeField]
     private float InputHoldTime = 0.15f;
 
@@ -39,14 +42,20 @@ public class PlayerInputHandler : MonoBehaviour
 
     private float dashInputStartTime;
 
+    
 
     #region Callback functions
 
-    private void Start()
+    private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
 
         cam = Camera.main;
+    }
+
+    private void Start()
+    {
+        gameMenu = GameObject.FindGameObjectWithTag("GameMenu");
 
         int count = Enum.GetValues(typeof(CombatInputs)).Length;
 
@@ -63,7 +72,19 @@ public class PlayerInputHandler : MonoBehaviour
 
     #region OnInput
 
-    public void onMoveInput(InputAction.CallbackContext context)
+    public void OnEscapeInput(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            gameMenu.GetComponent<Canvas>().enabled = true;
+            isGamePaused = true;
+            playerInput.DeactivateInput();
+            Time.timeScale = 0f;
+        }
+
+    }
+
+    public void OnMoveInput(InputAction.CallbackContext context)
     {
         RawMovementInput = context.ReadValue<Vector2>();
 
@@ -71,22 +92,21 @@ public class PlayerInputHandler : MonoBehaviour
 
         NormInputY = Mathf.RoundToInt(RawMovementInput.y);
 
-        
     }
 
-    public void onJumpInput(InputAction.CallbackContext context)
+    public void OnJumpInput(InputAction.CallbackContext context)
     {
        if(context.started)
-        {
-                JumpInput = true;
-                jumpInputStartTime = Time.time;
-                JumpInputStop = false; 
-        }
+       {
+           JumpInput = true;
+           jumpInputStartTime = Time.time;
+           JumpInputStop = false; 
+       }
 
        if(context.canceled)
-        {
-            JumpInputStop = true;
-        }
+       {
+           JumpInputStop = true;
+       }
     }
 
     public void OnDashInput(InputAction.CallbackContext context)
@@ -108,7 +128,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         RawDashDirectionInput = context.ReadValue<Vector2>();
 
-        if(playerInput.currentControlScheme == "Keyboard")
+        if(playerInput.currentControlScheme == "Keyboard" && cam)
         {
             RawDashDirectionInput = cam.ScreenToWorldPoint((Vector3)RawDashDirectionInput) - transform.position;
         }
@@ -182,6 +202,22 @@ public class PlayerInputHandler : MonoBehaviour
     public void UseJumpInput() => JumpInput = false;
 
     public void UseDashInput() => DashInput = false;
+
+    #endregion
+
+    #region OtherMethods
+
+    public void ActivateInput(bool value)
+    {
+        if(value)
+        {
+            playerInput.ActivateInput();
+        }
+        else
+        {
+            playerInput.DeactivateInput();
+        }
+    }
 
     #endregion
 }

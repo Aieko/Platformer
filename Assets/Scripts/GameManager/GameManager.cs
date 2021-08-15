@@ -1,45 +1,90 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
-    private Transform respawnPoint;
-    [SerializeField]
-    private GameObject player;
-    [SerializeField]
-    private float respawnTime;
+    public static GameManager instance;
 
-    private float respawnTimeStart;
+    //[SerializeField] private Transform respawnPoint;
+    //[SerializeField] private float respawnTime;
+    //private float respawnTimeStart;
+    //private bool respawn;
 
-    private bool respawn;
+
+    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject[] seed;
+
+    public List<string> pickedSeeds { get; private set; }
+
+    private GameObject gameMenu;
 
     private CinemachineVirtualCamera CVC;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            if (instance != this)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        for (int i = 0; i <= 2; i++)
+        {
+            if (PlayerPrefs.GetInt(seed[i].name) == 1)
+            {
+                Destroy(seed[i]);
+            }
+        }
+
+        gameMenu = GameObject.FindGameObjectWithTag("GameMenu");
+    }
 
     private void Start()
     {
         CVC = GameObject.Find("PlayerCamera").GetComponent<CinemachineVirtualCamera>();
+
+        Time.timeScale = 1f;
+
+        pickedSeeds = new List<string>();
+
     }
 
-    private void Update()
+    public void OnDeath()
     {
-        CheckRespawn();
-    }
-    public void Respawn()
-    {
-        respawnTimeStart = Time.time;
-        respawn = true;
+        gameMenu.GetComponent<GameMenuManager>().continueButton.SetActive(false);
+        gameMenu.GetComponent<Canvas>().enabled = true;
     }
 
-    private void CheckRespawn()
+    public void PickUpSeed(string seed)
     {
-        if (Time.time >= respawnTimeStart + respawnTime && respawn)
-        {
-            var playerTemp = Instantiate(player, respawnPoint);
-            CVC.m_Follow = playerTemp.transform;
-            respawn = false;
-        }
+        pickedSeeds.Add(seed);
     }
+
+    #region Unused
+
+    /*
+ public void Respawn()
+ {
+     respawnTimeStart = Time.time;
+     respawn = true;
+ }
+
+ private void CheckRespawn()
+ {
+     if (!(Time.time >= respawnTimeStart + respawnTime) || !respawn) return;
+     var playerTemp = Instantiate(player, respawnPoint);
+
+     playerTemp.transform.SetParent(playerTemp.transform);
+     CVC.m_Follow = playerTemp.transform;
+     respawn = false;
+ }*/
+
+    #endregion
 }

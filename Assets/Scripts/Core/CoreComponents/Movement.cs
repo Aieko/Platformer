@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Movement : CoreComponent
 {
@@ -27,6 +25,7 @@ public class Movement : CoreComponent
     {
         CurrentVelocity = RB.velocity;
     }
+
     #region Set Functions
 
     public void SetVelocityX(float velocity)

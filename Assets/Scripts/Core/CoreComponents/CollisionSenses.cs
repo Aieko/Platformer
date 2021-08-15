@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CollisionSenses : CoreComponent
 {
@@ -8,82 +6,51 @@ public class CollisionSenses : CoreComponent
 
     public Transform GroundCheck
     {
-        get
-        {
-            if(groundCheck)
-                return groundCheck;
+        get => GenericNotImplementedError<Transform>.TryGet(groundCheck, transform.parent.name);
 
-            Debug.LogError("No Ground Check on" + core.transform.parent.name);
-            return null;
-        }
-
-            set => groundCheck = value;
+        set => groundCheck = value;
 
     }
 
     public Transform WallCheck
     {
-        get
-        {
-            if (wallCheck)
-                return wallCheck;
-
-            Debug.LogError("No Wall Check on" + core.transform.parent.name);
-       
-            return null;
-        }
+        get => GenericNotImplementedError<Transform>.TryGet(wallCheck, transform.parent.name);
 
         set => wallCheck = value;
     }
 
     public Transform LedgeCheckHorizontal
     {
-        get
-        {
-            if (ledgeCheckHorizontal)
-                return ledgeCheckHorizontal;
-
-            Debug.LogError("No Ledge Check Horizontal on" + core.transform.parent.name);
-            return null;
-        }
+        get => GenericNotImplementedError<Transform>.TryGet(ledgeCheckHorizontal, transform.parent.name);
 
         set => ledgeCheckHorizontal = value;
     }
 
-    public Transform CeilingCheck {
-        get
-        {
-            if (ceilingCheck)
-                return ceilingCheck;
-
-            Debug.LogError("No Ceiling Check on" + core.transform.parent.name);
-            return null;
-        }
+    public Transform CeilingCheck
+    {
+        get => GenericNotImplementedError<Transform>.TryGet(ceilingCheck, transform.parent.name);
 
         set => ceilingCheck = value;
     }
 
-    public Transform LedgeCheckVertical {
-        get
-        {
-            if (ledgeCheckVertical)
-                return ledgeCheckVertical;
-
-            Debug.LogError("No Ledge Check Vertical on" + core.transform.parent.name);
-            return null;
-        }
+    public Transform LedgeCheckVertical
+    {
+        get => GenericNotImplementedError<Transform>.TryGet(ledgeCheckVertical, transform.parent.name);
 
         set => ledgeCheckVertical = value;
     }
 
     public float GroundCheckRadius { get => groundCheckRadius; set => groundCheckRadius = value; }
+
     public float WallCheckDistance { get => wallCheckDistance; set => wallCheckDistance = value; }
 
     public Vector2 CollisionCheckBoxSize { get => collisionCheckBoxSize; set => collisionCheckBoxSize = value; }
 
+    private GameObject secretWorkspace;
+    private float ledgeCheckDistance;
 
     #region Check Transfroms
-    [Header("Check Tranforms")]
+    [Header("Check Transforms")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private Transform wallCheck;
     [SerializeField] private Transform ledgeCheckHorizontal;
@@ -94,6 +61,7 @@ public class CollisionSenses : CoreComponent
     
     [SerializeField] private LayerMask whatIsGround;
     [SerializeField] private LayerMask whatIsPlatform;
+    [SerializeField] private LayerMask whatIsSecret;
    
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private float groundCheckRadius;
@@ -110,30 +78,24 @@ public class CollisionSenses : CoreComponent
         whatIsPlayer = LayerMask.NameToLayer("Player");
         playerLayerToIgnore = 1 << LayerMask.NameToLayer("Player");
         playerLayerToIgnore = ~playerLayerToIgnore;
+        ledgeCheckDistance = wallCheckDistance;
     }
 
     #region Check Functions
 
-    public bool CheckIfGrounded()
-    {
-        if (Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, whatIsGround)
-         || Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, whatIsPlatform))
-        {
-            return true;
-        }
-        else
-            return false;
-    }
+    public bool CheckIfGrounded() { return StandOnGround || StandOnPlatform; }
 
-    public bool StandOnPlatform { get => Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, whatIsPlatform); }
+    public bool StandOnPlatform => Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, whatIsPlatform);
 
-    public bool TouchingWallFront { get => Physics2D.Raycast(WallCheck.position, Vector2.right * core.Movement.FacingDirection, wallCheckDistance, whatIsGround); }
+    public bool StandOnGround => Physics2D.OverlapCircle(GroundCheck.position, groundCheckRadius, whatIsGround);
 
-    public bool TouchingWallBack { get => Physics2D.Raycast(WallCheck.position, Vector2.right * -core.Movement.FacingDirection, wallCheckDistance, whatIsGround); }
+    public bool TouchingWallFront => Physics2D.Raycast(WallCheck.position, Vector2.right * core.Movement.FacingDirection, wallCheckDistance, whatIsGround);
 
-    public bool TouchingLedgeHorizontal { get => Physics2D.Raycast(LedgeCheckHorizontal.position, Vector2.right * core.Movement.FacingDirection, wallCheckDistance, whatIsGround); }
+    public bool TouchingWallBack => Physics2D.Raycast(WallCheck.position, Vector2.right * -core.Movement.FacingDirection, wallCheckDistance, whatIsGround);
 
-    public bool TouchingLedgeVertical { get => Physics2D.Raycast(LedgeCheckVertical.position, Vector2.down, wallCheckDistance, whatIsGround); }
+    public bool TouchingLedgeHorizontal => Physics2D.Raycast(LedgeCheckHorizontal.position, Vector2.right * core.Movement.FacingDirection, ledgeCheckDistance, whatIsGround);
+
+    public bool TouchingLedgeVertical => Physics2D.Raycast(LedgeCheckVertical.position, Vector2.down, wallCheckDistance, whatIsGround);
 
     public bool CheckForCeiling()
     {
@@ -147,15 +109,13 @@ public class CollisionSenses : CoreComponent
 
     }
 
-    public bool InPlatfrom { get => Physics2D.OverlapBox(WallCheck.position, collisionCheckBoxSize, 0, whatIsPlatform); }
-
-  
+    public bool InPlatform => Physics2D.OverlapBox(WallCheck.position, collisionCheckBoxSize, 0, whatIsPlatform);
 
     public void CheckToIgnorePlatformCollision()
     {
         if (core.Movement.CurrentVelocity.y > 0)
         {
-            Collider2D collider = Physics2D.OverlapCircle(LedgeCheckHorizontal.position, groundCheckRadius, playerLayerToIgnore);
+            var collider = Physics2D.OverlapCircle(LedgeCheckHorizontal.position, groundCheckRadius, playerLayerToIgnore);
 
             if (collider)
             {
@@ -166,10 +126,19 @@ public class CollisionSenses : CoreComponent
 
             }
         }
-        else if (core.Movement.CurrentVelocity.y <= 0 && !InPlatfrom)
+        else if (core.Movement.CurrentVelocity.y <= 0 && !InPlatform)
         {
             Physics2D.IgnoreLayerCollision(whatIsPlayer, 13, false);
         }
+    }
+
+    #endregion
+
+    #region Other Methods
+
+    public void SetLedgeCheck(bool value)
+    {
+       wallCheckDistance = value ? wallCheckDistance : 0f;
     }
 
     #endregion

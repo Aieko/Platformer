@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class E2_PlayerDetectedState : PlayerDetectedState
 {
@@ -39,14 +37,12 @@ public class E2_PlayerDetectedState : PlayerDetectedState
             {
                 stateMachine.ChangeState(enemy.meleeAttackState);
             }
-           
         }
         else if(performLongRangeAction)
         {
             stateMachine.ChangeState(enemy.rangeAttackState);
         }
-        else
-        if(!isPlayerInMaxAgroRange)
+        else if(!isPlayerInMaxAgroRange)
         {
             stateMachine.ChangeState(enemy.lookForPlayerState);
         }

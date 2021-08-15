@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E2_StunState : StunState
+﻿public class E2_StunState : StunState
 {
     Enemy2 enemy;
 

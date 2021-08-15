@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
@@ -34,9 +33,11 @@ public class AggressiveWeapon : Weapon
     {
         WeaponAttackDetails details = aggressiveWeaponData.AttackDetails[attackCounter];
 
+        details.attackDetails.position =  transform.parent.transform.position;
+
         foreach(IDamageable item in detectedDamageable.ToList())
         {
-            item.Damage(details.damageAmount);
+            item.Damage(details.attackDetails);
         }
     }
 
@@ -47,8 +48,6 @@ public class AggressiveWeapon : Weapon
         if(damageable != null)
         {
             detectedDamageable.Add(damageable);
-
-
         }
     }
 
@@ -56,12 +55,9 @@ public class AggressiveWeapon : Weapon
     {
         IDamageable damageable = collision.GetComponent<IDamageable>();
 
-        
-
         if (damageable != null)
         {
             detectedDamageable.Remove(damageable);
-       
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MeleeCombat : MonoBehaviour
 {
@@ -23,7 +21,7 @@ public class MeleeCombat : MonoBehaviour
 
     private CharacterController2D PC;
 
-    private CharacterStats PS;
+    private PlayerStats PS;
 
     private void Update()
     {
@@ -37,7 +35,7 @@ public class MeleeCombat : MonoBehaviour
         anim.SetBool("canAttack", combatEnabled);
 
         PC = GetComponent<CharacterController2D>();
-        PS = GetComponent<CharacterStats>(); //player stats
+        PS = GetComponent<PlayerStats>(); //player stats
     }
 
     private void CheckCombatInput()

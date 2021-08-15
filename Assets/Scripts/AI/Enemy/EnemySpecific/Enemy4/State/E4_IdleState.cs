@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E4_IdleState : IdleState
+﻿public class E4_IdleState : IdleState
 {
     Enemy4 enemy;
     public E4_IdleState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, D_IdleState stateData, Enemy4 enemy) : base(entity, stateMachine, animBoolName, stateData)

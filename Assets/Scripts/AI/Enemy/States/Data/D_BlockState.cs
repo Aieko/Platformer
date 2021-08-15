@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 [CreateAssetMenu(fileName = "NewBlockStateData", menuName = "Data/State Data/Block State")]
 public class D_BlockState : ScriptableObject
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy1 : Entity
 {
@@ -57,8 +55,12 @@ public class Enemy1 : Entity
         meleeAttackState = new E1_MeleeAttackState(this, stateMachine, "meleeAttack", meleeAttackPosition, meleeAttackStateData, this);
         stunState = new E1_StunState(this, stateMachine, "stun", stunStateData, this);
         deadState = new E1_DeadState(this, stateMachine, "dead", deadStateData, this);
-     
-        stateMachine.Initialize(idleState); 
+      
+    }
+
+    private void Start()
+    {
+        stateMachine.Initialize(idleState);
     }
 
     public override void OnDrawGizmos()

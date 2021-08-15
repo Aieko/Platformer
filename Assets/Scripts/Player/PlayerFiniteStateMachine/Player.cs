@@ -1,23 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     #region Components
+
     public Core Core { get; private set; }
 
     public Animator Anim { get; private set; }
     public PlayerInputHandler InputHandler { get; private set; }
     public Rigidbody2D RB { get; private set; }
-    public BoxCollider2D PlayerCollider { get; private set; }
+    public CapsuleCollider2D PlayerCollider { get; private set; }
     public Transform DashDirectionIndicator { get; private set; }
+    public PlayerStats PlayerStats { get; private set; }
 
     public PlayerInventory Inventory { get; private set; }
 
     #endregion
 
     #region State veriables
+
     public PlayerStateMachine StateMachine { get; private set; }
 
     public PlayerIdleState IdleState { get; private set; }
@@ -49,15 +50,14 @@ public class Player : MonoBehaviour
 
     
     #endregion
-
     
-
     #region Private Verialbes
     private Vector2 workspace;
     
     #endregion
 
     #region Unity Callback Functions
+
     private void Awake()
     {
         Core = GetComponentInChildren<Core>();
@@ -88,7 +88,8 @@ public class Player : MonoBehaviour
         Anim = GetComponent<Animator>();
         InputHandler = GetComponent<PlayerInputHandler>();
         RB = GetComponent<Rigidbody2D>();
-        PlayerCollider = GetComponent<BoxCollider2D>();
+        PlayerCollider = GetComponent<CapsuleCollider2D>();
+        PlayerStats = GetComponent<PlayerStats>();
         DashDirectionIndicator = transform.Find("DashDirectionIndicator");
 
         //INVENTORY
@@ -97,7 +98,8 @@ public class Player : MonoBehaviour
         PrimaryAttackState.SetWeapon(Inventory.weapons[(int)CombatInputs.primary]);
         SecondaryAttackState.SetWeapon(Inventory.weapons[(int)CombatInputs.secondary]);
         
-        StateMachine.Initialize(IdleState); 
+        StateMachine.Initialize(IdleState);
+
     }
 
     private void Update()
@@ -112,8 +114,7 @@ public class Player : MonoBehaviour
     }
 
     #endregion
-    
-
+   
     #region Other Functions
 
     public void SetColliderHeight(float height)
@@ -129,14 +130,18 @@ public class Player : MonoBehaviour
         PlayerCollider.offset = center;
     }
 
+    //TODO change the way dealing damage to enemies
+    public void Damage(float amount)
+    {
+        PlayerStats.DecreaseHealth(amount);
+    }
+
     private void AnimationTrigger() => StateMachine.currentState.AnimationTrigger();
 
     private void AnimationFinishTrigger() => StateMachine.currentState.AnimationFinishTrigger();
 
-    private void InvalidOperationException(string ex)
-    {
-        Debug.LogError(ex);
-    }
+   
+
     #endregion
 
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerLedgeClimbState : PlayerState
 {
@@ -34,7 +32,7 @@ public class PlayerLedgeClimbState : PlayerState
     {
         base.AnimationTrigger();
 
-        if (!core.CollisionSenses.InPlatfrom)
+        if (!core.CollisionSenses.InPlatform)
         {
             isHanging = true;
         }
@@ -62,12 +60,11 @@ public class PlayerLedgeClimbState : PlayerState
 
         isHanging = false;
 
-        if(isClimbing)
-        {
-            player.transform.position = stopPos;
+        if (!isClimbing) return;
 
-            isClimbing = false;
-        }
+        player.transform.position = stopPos;
+
+        isClimbing = false;
     }
 
     public override void LogicUpdate()
@@ -95,7 +92,7 @@ public class PlayerLedgeClimbState : PlayerState
             core.Movement.SetVelocityZero();
             player.transform.position = startPos;
             //check if platform moving on player and changes his state
-            if(core.CollisionSenses.InPlatfrom)
+            if(core.CollisionSenses.InPlatform)
             {
                 if(core.CollisionSenses.CheckForCeiling())
                 {
@@ -115,11 +112,18 @@ public class PlayerLedgeClimbState : PlayerState
             {
                 stateMachine.ChangeState(player.InAirState);
             }
-            else if (jumpInput && !isClimbing)
+            else switch (jumpInput)
             {
-                player.WallJumpState.DetermineWallJumpDirection(true);
-                stateMachine.ChangeState(player.WallJumpState);
+                case true when !isClimbing && yInput == 1:
+                    stateMachine.ChangeState(player.JumpState);
+                    break;
+
+                case true when !isClimbing && xInput != core.Movement.FacingDirection && xInput != 0:
+                    player.WallJumpState.DetermineWallJumpDirection(true);
+                    stateMachine.ChangeState(player.WallJumpState);
+                    break;
             }
+           
         } 
     }
 

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E1_MoveState : MoveState
+﻿public class E1_MoveState : MoveState
 {
     private Enemy1 enemy;
 

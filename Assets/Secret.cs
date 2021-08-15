@@ -1,31 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.Tilemaps;
+﻿using UnityEngine.Tilemaps;
 using UnityEngine;
 
 public class Secret : MonoBehaviour
 {
-    private TilemapRenderer tileRenderer;
+    [SerializeField] private TilemapRenderer tilemapRenderer;
 
-
-  
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        tileRenderer = GetComponent<TilemapRenderer>(); 
+        var tilemapRenderer = this.GetComponent<TilemapRenderer>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-          tileRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-    }
+    //TODO make enemies to see player in secrets
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerEnter2D(Component collision)
     {
         if (collision.CompareTag("Player"))
-            tileRenderer.maskInteraction = SpriteMaskInteraction.None;
+        {
+            tilemapRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+        }
     }
 
-
+    private void OnTriggerExit2D(Component collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            tilemapRenderer.maskInteraction = SpriteMaskInteraction.None;
+        }
+    }
 }

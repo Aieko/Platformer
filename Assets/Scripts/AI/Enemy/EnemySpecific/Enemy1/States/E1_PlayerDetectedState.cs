@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E1_PlayerDetectedState : PlayerDetectedState
+﻿public class E1_PlayerDetectedState : PlayerDetectedState
 {
     private Enemy1 enemy;
 

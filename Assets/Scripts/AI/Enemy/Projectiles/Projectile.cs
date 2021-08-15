@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
@@ -16,6 +14,7 @@ public class Projectile : MonoBehaviour
     private Animator anim;
     private bool isGravityOn;
     private bool hasHitGround;
+    private bool explode = false;
 
     [SerializeField] private bool shouldExplode;
     [SerializeField] private bool shouldExplOnHit;
@@ -46,56 +45,57 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-        if(!hasHitGround)
-        {
-            attackDetails.position = transform.position;
+        if (hasHitGround) return;
+        
+        attackDetails.position = transform.position;
+
             if(isGravityOn)
             {
-                float angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+                var angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
 
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             }
-        }
+        
     }
-
+    //TODO change way of dealing damage to player
     private void FixedUpdate()
     {
-       
-        if(!hasHitGround)
-        {
-            Collider2D damageHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsPlayer);
-            Collider2D groundHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsGround);
+
+        if (hasHitGround) return;
+        
+        var damageHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsPlayer);
+        var groundHit = Physics2D.OverlapCircle(damagePosition.position, damageRadius, whatIsGround);
 
             if(damageHit)
             {
-                CharacterController2D PC = damageHit.transform.gameObject.GetComponent<CharacterController2D>();
 
-                if (PC.isDashing)
-                {
-                    return;
-                }
-                   
-                else if(shouldDamOnHit || shouldExplOnHit)
+                Debug.Log("You were hit by projectile!");
+
+                var player = damageHit.transform.gameObject.GetComponent<Player>();
+
+                if (player.StateMachine.currentState == player.DashState) return;
+                
+                if(shouldDamOnHit || shouldExplOnHit)
                 {
                     if (shouldDamOnHit)
                     {
-                        damageHit.transform.SendMessage("Damage", attackDetails);
+                        player.Damage(10f);
 
                         Destroy(gameObject);
                     }
 
-                    if (shouldExplOnHit)
+                    if (shouldExplOnHit && !explode)
                     {
                         Explosion();
                     } 
-                }           
+                }    
             }
 
             if(groundHit)
             {
                 hasHitGround = true;
 
-                if (shouldExplOnHit)
+                if (shouldExplOnHit && !explode)
                 {
                     Explosion();
                 }
@@ -104,40 +104,56 @@ public class Projectile : MonoBehaviour
                 {
                     rb.gravityScale = 0f;
                     rb.velocity = Vector2.zero;
-
-                    
                 }  
             }
+
             if (Mathf.Abs(xStartPos - transform.position.x) >= travelDistance && !isGravityOn)
             {
                 isGravityOn = true;
 
                 rb.gravityScale = gravity;
             }
-        }  
+          
     }
 
     public void Explosion()
     {
+        
+
         rb.gravityScale = 0f;
         rb.velocity = Vector2.zero;
         
-        Collider2D explosionHit = Physics2D.OverlapCircle(damagePosition.position, explosionRadius, whatIsPlayer);
-        if (explosionHit)
-        {
-            CharacterController2D PC = explosionHit.transform.gameObject.GetComponent<CharacterController2D>();
 
-            if (PC.isDashing)
-                return;
-            else
-            {
-                explosionHit.transform.SendMessage("Damage", attackDetails);
-            }
+        Debug.Log("Boom");
+          
+           var explosionHit = Physics2D.OverlapCircle(damagePosition.position, explosionRadius, whatIsPlayer);
 
-        }
+           if (explosionHit)
+           {
+               var player = explosionHit.transform.gameObject.GetComponent<Player>();
 
+               if (player.StateMachine.currentState == player.DashState) return;
+
+               player.Damage(10f);
+
+               int direction;
+
+               if (player.transform.position.x < transform.position.x)
+               {
+                   direction = -1;
+               }
+               else
+               {
+                   direction = 1;
+               }
+
+            player.Core.Movement.SetVelocity(20f, new Vector2(3f,2f), direction);
+           }
+
+        explode = true;
         anim.SetBool("Boom", true);
     }
+
     public void Destroy()
     {
         Destroy(gameObject);
@@ -151,7 +167,6 @@ public class Projectile : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-
         Gizmos.DrawWireSphere(damagePosition.position, damageRadius);
     }
 }

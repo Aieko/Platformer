@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MeleeAttackState : AttackState
 {
@@ -54,9 +52,17 @@ public class MeleeAttackState : AttackState
 
         Collider2D[] detectedObjects = Physics2D.OverlapCircleAll(attackPosition.position, stateData.attackRadius, stateData.whatIsPlayer);
 
-       if(detectedObjects.Length > 0)
-        detectedObjects[0].transform.SendMessage("Damage", attackDetails);
+        //TODO change the way of dealing damage to player
+        if (detectedObjects.Length > 0)
+        {
+            Debug.Log("You were hit");
 
-        
+            Player player = detectedObjects[0].transform.gameObject.GetComponent<Player>();
+
+            if(player)
+            {
+                player.Damage(stateData.attackDamage);
+            }
+        }
     }
 }

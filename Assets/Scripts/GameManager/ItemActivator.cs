@@ -21,13 +21,22 @@ public class ItemActivator : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.Find("Player");
+        player = GameObject.FindWithTag("Player");
+
         activatorItems = new List<ActivatorItem>();
         addList = new List<ActivatorItem>();
 
         AddToList();
+
     }
 
+    private void Update()
+    {
+        if(!player)
+        {
+            player = GameObject.FindWithTag("Player");
+        }
+    }
     void AddToList()
     {
         if (addList.Count > 0)
@@ -57,56 +66,63 @@ public class ItemActivator : MonoBehaviour
                 if(item.item.CompareTag("Enemy"))
                 {
                    Entity enemy = item.item.GetComponent<Entity>();
-                
-                    if (Vector3.Distance(player.transform.position, item.item.transform.position) > distanceFromPlayer)
+
+                    if (player)
                     {
-                       
+                        if (Vector3.Distance(player.transform.position, item.item.transform.position) > distanceFromPlayer)
+                        {
+
+                            if (item.item == null)
+                            {
+                                removeList.Add(item);
+                            }
+                            else
+                            {
+                                if (enemy.anim.GetBool("Idle"))
+                                    enemy.enabled = false;
+                            }
+                        }
+                        else
+                        {
+
+                            if (item.item == null)
+                            {
+                                removeList.Add(item);
+                            }
+                            else
+                            {
+                                enemy.enabled = true;
+                            }
+                        }
+                    }
+            
+                }
+                else if(player)
+                {
+                    if (Vector3.Distance(player.transform.position, item.item.transform.position) > distanceFromPlayer && player)
+                    {
                         if (item.item == null)
                         {
                             removeList.Add(item);
                         }
                         else
                         {
-                            if(enemy.anim.GetBool("Idle"))
-                            enemy.enabled = false;
+                            item.item.SetActive(false);
                         }
                     }
                     else
                     {
-                        
-                        if (item.item == null)
+                        if (item.item == null && item.item.CompareTag("Enemy"))
                         {
                             removeList.Add(item);
                         }
                         else
                         {
-                          enemy.enabled = true;
+                            item.item.SetActive(true);
                         }
                     }
                 }
-                else
-                if (Vector3.Distance(player.transform.position, item.item.transform.position) > distanceFromPlayer)
-                {
-                    if (item.item == null)
-                    {
-                        removeList.Add(item);
-                    }
-                    else
-                    {
-                        item.item.SetActive(false);
-                    }
-                }
-                else
-                {
-                    if (item.item == null && item.item.CompareTag("Enemy"))
-                    {
-                        removeList.Add(item);
-                    }
-                    else
-                    {
-                        item.item.SetActive(true);
-                    }
-                }
+              
 
                 yield return new WaitForSeconds(0.01f);
             }

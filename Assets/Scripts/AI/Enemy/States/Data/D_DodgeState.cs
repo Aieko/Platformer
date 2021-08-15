@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewDodgeStateData", menuName = "Data/State Data/Dodge State")]
 public class D_DodgeState : ScriptableObject

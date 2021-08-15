@@ -15,10 +15,19 @@ MonoBehaviour:
   attackDetails:
   - attackName: Left slash
     movementSpeed: 3
-    damageAmount: 10
+    attackDetails:
+      position: {x: 0, y: 0}
+      damageAmount: 10
+      stunDamageAmount: 1
   - attackName: Right slash
     movementSpeed: 4
-    damageAmount: 15
+    attackDetails:
+      position: {x: 0, y: 0}
+      damageAmount: 15
+      stunDamageAmount: 1
   - attackName: Upper slash
     movementSpeed: 2
-    damageAmount: 20
+    attackDetails:
+      position: {x: 0, y: 0}
+      damageAmount: 20
+      stunDamageAmount: 2

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerJumpState : PlayerAbilityState
+﻿public class PlayerJumpState : PlayerAbilityState
 {
     private int amountOfJumpsLeft;
 

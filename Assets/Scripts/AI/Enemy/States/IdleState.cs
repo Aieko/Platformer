@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class IdleState : State
 {
@@ -21,6 +19,7 @@ public class IdleState : State
     public override void DoChecks()
     {
         base.DoChecks();
+
         isPlayerInMinAgroRange = entity.CheckPlayerInMinAgroRange();
         isPlayerInSight = entity.CheckPlayerInSight();
     }

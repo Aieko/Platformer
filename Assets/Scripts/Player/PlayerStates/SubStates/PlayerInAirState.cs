@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInAirState : PlayerState
 {
@@ -81,8 +79,6 @@ public class PlayerInAirState : PlayerState
     {
         base.LogicUpdate();
 
-
-
         CheckCoyoteTime();
         CheckWallJumpCoyoteTime();
 
@@ -91,8 +87,7 @@ public class PlayerInAirState : PlayerState
         jumpInputStop = player.InputHandler.JumpInputStop;
         grabInput = player.InputHandler.GrabInput;
         dashInput = player.InputHandler.DashInput;
-       
-
+        
         CheckJumpMultiplier();
 
         //Jumping through the platforms
@@ -100,6 +95,7 @@ public class PlayerInAirState : PlayerState
         //so player could climb through the static and be stunned by dynamic if they start to collide with his head
 
         core.CollisionSenses.CheckToIgnorePlatformCollision();
+      
 
         if (player.InputHandler.AttackInputs[(int)CombatInputs.primary])
         {
@@ -109,7 +105,7 @@ public class PlayerInAirState : PlayerState
         {
             stateMachine.ChangeState(player.SecondaryAttackState);
         }
-        else if (isGrounded && core.Movement.CurrentVelocity.y < 0.01f && !core.CollisionSenses.InPlatfrom)
+        else if (isGrounded && core.Movement.CurrentVelocity.y < 0.01f && !core.CollisionSenses.InPlatform)
         {
             stateMachine.ChangeState(player.LandedState);
         }
@@ -192,6 +188,8 @@ public class PlayerInAirState : PlayerState
         }
         
     }
+
+    
 
     private void CheckWallJumpCoyoteTime()
     {

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class E4_LookForPlayerState : LookForPlayerState
+﻿public class E4_LookForPlayerState : LookForPlayerState
 {
     Enemy4 enemy;
     public E4_LookForPlayerState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, D_LookForPlayerState stateData, Enemy4 enemy) : base(entity, stateMachine, animBoolName, stateData)

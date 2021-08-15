@@ -1,12 +1,9 @@
 ﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+
 public class EditorHelper : MonoBehaviour
 {
-    [MenuItem("EditorHelper/SliceSprites")]
+    /*[MenuItem("EditorHelper/SliceSprites")]
+
     static void SliceSprites()
     {
         // Change the below for the with and height dimensions of each sprite within the spritesheets
@@ -51,5 +48,5 @@ public class EditorHelper : MonoBehaviour
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         }
         Debug.Log("Done Slicing!");
-    }
+    }*/
 }

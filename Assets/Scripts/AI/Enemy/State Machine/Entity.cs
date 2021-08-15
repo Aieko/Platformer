@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Entity : MonoBehaviour
+public class Entity : MonoBehaviour, IDamageable
 {
     
     [Header("Base Entity")]
@@ -36,8 +34,8 @@ public class Entity : MonoBehaviour
     private float currentHealth;
     private float currentStunResistance;
     private float lastDamageTime;
-    //layer mask for player investigation 
-    private int friendlyLayer;
+    //Layers to Ignore
+    private int ignoreLayers;
 
     protected bool isStunned;
     protected bool isDead;
@@ -51,27 +49,28 @@ public class Entity : MonoBehaviour
 
     public virtual void Awake()
     {
-        isGetHit = false;
-        currentHealth = entityData.maxHealth;
-        currentStunResistance = entityData.stunResistance;
-        canBeHurt = entityData.canBeHurt;
-
-        friendlyLayer = 1 << LayerMask.NameToLayer("Damageable");
-        friendlyLayer = ~friendlyLayer;
 
         anim = GetComponent<Animator>();
         atsm = GetComponent<AnimationToStateMachine>();
         Core = GetComponentInChildren<Core>();
 
+        isGetHit = false;
+        currentHealth = entityData.maxHealth;
+        currentStunResistance = entityData.stunResistance;
+        canBeHurt = entityData.canBeHurt;
+        //bitwise operation for ignoring multiple layers
+        ignoreLayers = ~( (1 << LayerMask.NameToLayer("Damageable")) | (1 << LayerMask.NameToLayer("Secret")) ); 
+
         stateMachine = new FiniteStateMachine();
 
-    
         HealthBar.SetMaxHealth(entityData.maxHealth);
    
     }
 
     public virtual void Update()
     {
+        Core.LogicUpdate();
+
         stateMachine.currentState.LogicUpdate();
 
         anim.SetFloat("YVelocity", Core.Movement.RB.velocity.y);
@@ -91,18 +90,9 @@ public class Entity : MonoBehaviour
  
     public virtual bool CheckPlayerInSight()
     {
-        RaycastHit2D hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * Core.Movement.FacingDirection), friendlyLayer);
-        if (hit.collider != null)
-        {
-            if (hit.collider.CompareTag("Player"))
-            {
-                return true;
-            }
-            else
-                return false;
-        }
-        else
-        return false; 
+        var hit = Physics2D.Linecast(playerCheck.position, playerCheck.position + (Vector3)(Vector2.right * entityData.maxAgroDistance * Core.Movement.FacingDirection), ignoreLayers);
+
+        return hit.collider != null && hit.collider.CompareTag("Player");
     }
 
     public virtual bool CheckPlayerInMinAgroRange()

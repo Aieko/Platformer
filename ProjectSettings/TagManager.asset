@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - JumpOffPlatform
+  - GameMenu
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Enemy
   - Platform
   - Weapon
-  - 
+  - Secret
   - 
   - 
   - 

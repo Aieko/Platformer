@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 [CreateAssetMenu(fileName = "NewRangeAttackStateData", menuName = "Data/State Data/Range Attack State")]
 public class D_RangeAttack : ScriptableObject
 {

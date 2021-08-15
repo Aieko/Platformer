@@ -82,10 +82,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   entityData: {fileID: 11400000, guid: 58e65e1755667cb4b82b46d48545323b, type: 2}
-  wallCheck: {fileID: 4385445577366507289}
-  ledgeCheck: {fileID: 4260964329332923737}
   playerCheck: {fileID: 3449652195654806465}
-  groundCheck: {fileID: 5440786329599086734}
   HealthBar: {fileID: 5160415823934592379}
   idleStateData: {fileID: 11400000, guid: 9aec484080836a148a426467bf5a9e22, type: 2}
   moveStateData: {fileID: 11400000, guid: aafb2b2de65430d47afa5161216e0dbc, type: 2}
@@ -678,7 +675,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6855659524782622136}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.024000315, y: 0.55000013, z: 0}
+  m_LocalPosition: {x: -0.024000315, y: 0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3903374034005210805}

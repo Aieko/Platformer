@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+[System.Serializable]
 public struct AttackDetails
 {
     public Vector2 position;
@@ -18,5 +17,5 @@ public struct WeaponAttackDetails
 
     public float movementSpeed;
 
-    public float damageAmount;
+    public AttackDetails attackDetails;
 }

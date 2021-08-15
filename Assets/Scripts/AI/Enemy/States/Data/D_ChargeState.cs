@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewChargeStateData", menuName = "Data/State Data/Charge State")]
 public class D_ChargeState : ScriptableObject

@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerTouchingWallState : PlayerState
+﻿public class PlayerTouchingWallState : PlayerState
 {
 
     protected bool isGrounded;

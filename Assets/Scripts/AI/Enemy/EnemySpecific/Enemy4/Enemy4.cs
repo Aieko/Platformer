@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy4 : Entity
 {
@@ -62,6 +60,11 @@ public class Enemy4 : Entity
         deadState = new E4_DeadState(this, stateMachine, "Dead", deadStateData, this);
 
 
+        
+    }
+
+    private void Start()
+    {
         stateMachine.Initialize(idleState);
     }
 

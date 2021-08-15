@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu (fileName = "NewEntityData", menuName = "Data/Entity Data/Base Data" )]
 public class D_Entity : ScriptableObject
@@ -13,9 +11,6 @@ public class D_Entity : ScriptableObject
     [Header("Damage Push")]
     public float damageHopSpeedY = 8f;
     [Header ("Checks")]
-    public float wallCheckDistance = 0.2f;
-    public float ledgeCheckDistance = 0.4f;
-    public float groundCheckRadius = 0.3f;
     public float closeRangeActionDistance = 1.0f;
     [Header("Vision")]
     public float maxAgroDistance = 8f;

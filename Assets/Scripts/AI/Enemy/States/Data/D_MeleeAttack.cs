@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewMeleeAttackStateData", menuName = "Data/State Data/Melee Attack State")]
 public class D_MeleeAttack : ScriptableObject

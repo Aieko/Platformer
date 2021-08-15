@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class PlayerGroundState : PlayerState
+﻿public class PlayerGroundState : PlayerState
 {
     protected int xInput;
     protected int yInput;
@@ -13,6 +9,7 @@ public class PlayerGroundState : PlayerState
     private bool isTouchingWall;
     private bool isTouchingLedge;
     private bool isStandOnPlatform;
+    private bool isStandOnGround;
     private bool grabInput;
     private bool dashInput;
 
@@ -31,6 +28,7 @@ public class PlayerGroundState : PlayerState
         isTouchingWall = core.CollisionSenses.TouchingWallFront;
         isTouchingLedge = core.CollisionSenses.TouchingLedgeHorizontal;
         isStandOnPlatform = core.CollisionSenses.StandOnPlatform;
+        isStandOnGround = core.CollisionSenses.StandOnGround;
     }
 
     public override void Enter()
@@ -65,7 +63,7 @@ public class PlayerGroundState : PlayerState
         {
             stateMachine.ChangeState(player.SecondaryAttackState);
         }
-        else if (jumpInput && player.InputHandler.NormInputY == -1 && isStandOnPlatform)
+        else if (jumpInput && player.InputHandler.NormInputY == -1 && isStandOnPlatform && !isStandOnGround)
         {
             stateMachine.ChangeState(player.JumpOffState);
         }

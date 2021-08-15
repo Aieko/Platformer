@@ -12,7 +12,7 @@ public class DisableIfFarAway : MonoBehaviour
 
     // --------------------------------------------------
 
-    void Start()
+    private void Start()
     {
         itemActivatorObject = GameObject.Find("ItemActivatorObject");
         activationScript = itemActivatorObject.GetComponent<ItemActivator>();
@@ -20,7 +20,7 @@ public class DisableIfFarAway : MonoBehaviour
         StartCoroutine("AddToList");
     }
 
-    IEnumerator AddToList()
+    private IEnumerator AddToList()
     {
         yield return new WaitForSeconds(0.1f);
 

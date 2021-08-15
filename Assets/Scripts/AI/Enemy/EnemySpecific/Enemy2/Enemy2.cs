@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy2 : Entity
 {
@@ -65,7 +63,12 @@ public class Enemy2 : Entity
         dodgeState = new E2_DodgeState(this, stateMachine, "Dodge", dodgeStateData, this);
         rangeAttackState = new E2_RangeAttackState(this, stateMachine, "RangeAttack", rangeAttackPosition, rangeAttackData, this);
 
-        stateMachine.Initialize(moveState);
+        
+    }
+
+    private void Start()
+    {
+        stateMachine.Initialize(idleState);
     }
 
     public override void Damage(AttackDetails attackDetails)
@@ -85,8 +88,6 @@ public class Enemy2 : Entity
             stateMachine.ChangeState(deadState);
             
         }
-
-
         if (isStunned && stateMachine.currentState != stunState)
         {
             stateMachine.ChangeState(stunState);

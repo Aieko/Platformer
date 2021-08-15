@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerState
 {
@@ -60,7 +58,7 @@ public class PlayerState
 
     public virtual void DoChecks()
     {
-
+        
     }
 
     public virtual void AnimationTrigger()
