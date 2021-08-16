@@ -8,16 +8,16 @@ using UnityEngine.UI;
 public class MenuUIManager : MonoBehaviour
 {
     public static MenuUIManager instance;
-    [SerializeField] Text starText;
+    [SerializeField] Text seedText;
     [SerializeField] private GameObject mapSelectionPanel;
     [SerializeField] private GameObject[] levelSelectionPanels;
 
-    public int stars;
+    public int seeds;
     
     public MapSelection[] mapSelections;
-    public Text[] questStarsText;
-    public Text[] lockedStarsText;
-    public Text[] unlockedStarsText;
+    public Text[] questSeedsText;
+    public Text[] lockedSeedsText;
+    public Text[] unlockedSeedsText;
 
     
     private void Awake()
@@ -41,48 +41,48 @@ public class MenuUIManager : MonoBehaviour
         {
             if (PlayerPrefs.GetInt("Seed" + i ) == 1)
             {
-                stars++;
+                seeds++;
             }
         }
 
-        UpdateNumOfStars();
+        UpdateNumOfSeeds();
 
-        EventCenter.GetInstance().AddEventListener("RefreshStatistics", UpdateNumOfStars);
-        EventCenter.GetInstance().AddEventListener("RefreshStatistics", UpdateLockedStarUI);
-        EventCenter.GetInstance().AddEventListener("RefreshStatistics", UpdateUnlockedStarUI);
+        EventCenter.GetInstance().AddEventListener("RefreshStatistics", UpdateNumOfSeeds);
+        EventCenter.GetInstance().AddEventListener("RefreshStatistics", UpdateLockedSeedUI);
+        EventCenter.GetInstance().AddEventListener("RefreshStatistics", UpdateUnlockedSeedUI);
     }
 
     private void OnDestroy()
     {
-        EventCenter.GetInstance().RemoveEventListener("RefreshStatistics", UpdateNumOfStars);
-        EventCenter.GetInstance().RemoveEventListener("RefreshStatistics", UpdateLockedStarUI);
-        EventCenter.GetInstance().RemoveEventListener("RefreshStatistics", UpdateUnlockedStarUI);
+        EventCenter.GetInstance().RemoveEventListener("RefreshStatistics", UpdateNumOfSeeds);
+        EventCenter.GetInstance().RemoveEventListener("RefreshStatistics", UpdateLockedSeedUI);
+        EventCenter.GetInstance().RemoveEventListener("RefreshStatistics", UpdateUnlockedSeedUI);
     }
 
 
-    private void UpdateNumOfStars()
+    private void UpdateNumOfSeeds()
     {
-        starText.text = stars.ToString();
+        seedText.text = seeds.ToString();
     }
 
-    private void UpdateLockedStarUI()
+    private void UpdateLockedSeedUI()
     {
         for (var i = 0; i < mapSelections.Length; i++)
         {
-            questStarsText[i].text = mapSelections[i].questNumStars.ToString();
+            questSeedsText[i].text = mapSelections[i].questNumStars.ToString();
 
             if (!mapSelections[i].isUnlock)
             {
-                lockedStarsText[i].text = stars.ToString() + "/" + (i+1) * 18;
+                lockedSeedsText[i].text = seeds.ToString() + "/" + (i+1) * 18;
             }
         }
     }
 
-    private void UpdateUnlockedStarUI()
+    private void UpdateUnlockedSeedUI()
     {
         for (var i = 0; i < mapSelections.Length; i++)
         {
-            unlockedStarsText[i].text = stars.ToString() + "/" + (i + 1) * 18;
+            unlockedSeedsText[i].text = seeds.ToString() + "/" + (i + 1) * 18;
         }
     }
 
@@ -108,7 +108,7 @@ public class MenuUIManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("You cannot open this map now. Please work hard to collect more stars");
+            Debug.Log("You cannot open this map now. Please work hard to collect more seeds");
         }
     }
 

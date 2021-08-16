@@ -41,6 +41,6 @@ public class MapSelection : MonoBehaviour
 
     private void UpdateLockOnMap()
     {
-        isUnlock = MenuUIManager.instance.stars >= questNumStars;
+        isUnlock = MenuUIManager.instance.seeds >= questNumStars;
     }
 }

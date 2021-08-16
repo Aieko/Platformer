@@ -1,19 +1,28 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour
 {
     Resolution[] resolutions;
 
-    public TMPro.TMP_Dropdown resolutionDropdown;
+    private TMPro.TMP_Dropdown resolutionDropdown;
+    private Toggle fullScreenToggle;
 
     public AudioMixer audioMixer;
 
+    private void Awake()
+    {
+        fullScreenToggle = gameObject.GetComponentInChildren<Toggle>();
+        resolutionDropdown = gameObject.GetComponentInChildren<TMPro.TMP_Dropdown>();
+    }
+
     private void Start()
     {
-        
-         resolutions = Screen.resolutions;
+        fullScreenToggle.isOn = PlayerPrefs.GetInt("FullScreen") == 1;
+
+        resolutions = Screen.resolutions;
 
         resolutionDropdown.ClearOptions();
 
@@ -35,14 +44,22 @@ public class OptionsMenu : MonoBehaviour
 
         resolutionDropdown.AddOptions(options);
 
-        resolutionDropdown.value = currentResolutionIndex;
+        resolutionDropdown.value = PlayerPrefs.GetInt("Resolution");
         resolutionDropdown.RefreshShownValue();
+
+    }
+
+    private void OnDestroy()
+    {
+        //EventCenter.GetInstance().RemoveEventListener("Options", UpdateNumOfSeeds);
     }
 
 
-    public void SetResolution(int resolutionIndex)
+    public void SetResolution()
     {
-        Resolution resolution = resolutions[resolutionIndex];
+        Resolution resolution = resolutions[resolutionDropdown.value];
+
+        PlayerPrefs.SetInt("Resolution", resolutionDropdown.value);
 
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
@@ -54,10 +71,16 @@ public class OptionsMenu : MonoBehaviour
     public void SetGraphicsQuality(int qualityIndex)
     {
         QualitySettings.SetQualityLevel(qualityIndex);
+       
     }
 
-    public void SetFullscreen(bool IsFullscreen)
+    public void SetFullscreen()
     {
-        Screen.fullScreen = IsFullscreen;
+       
+
+        PlayerPrefs.SetInt("FullScreen", fullScreenToggle.isOn ? 1 : 0);
+        
+        Screen.fullScreen = PlayerPrefs.GetInt("FullScreen") == 1;
     }
+
 }
