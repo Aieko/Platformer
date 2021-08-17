@@ -7,13 +7,13 @@ public class LevelSelection : MonoBehaviour
 {
     public GameObject lockGO;
 
-    public GameObject[] emptyStars;
+    public GameObject[] emptySeeds;
 
-    public GameObject[] filledStars;
+    public GameObject[] filledSeeds;
 
     public bool isUnlock { get; private set; }
     private int levelNumber;
-    private int[] starsNum;
+    private int[] seedsNum;
 
     private void Awake()
     {
@@ -41,19 +41,19 @@ public class LevelSelection : MonoBehaviour
     {
         int workspace = levelNum * 3;
 
-        starsNum = new int[] {workspace, workspace - 1, workspace - 2};
+        seedsNum = new int[] {workspace - 2, workspace - 1, workspace};
 
         for (int i = 0; i < 3; i++)
         {
-            if (PlayerPrefs.GetInt("Seed" + starsNum[i]) == 1)
+            if (PlayerPrefs.GetInt("Seed" + seedsNum[i]) == 1)
             {
-                emptyStars[i].SetActive(false);
-                filledStars[i].SetActive(true);
+                emptySeeds[i].SetActive(false);
+                filledSeeds[i].SetActive(true);
             }
             else
             {
-                filledStars[i].SetActive(false);
-                if(isUnlock) { emptyStars[i].SetActive(true); }
+                filledSeeds[i].SetActive(false);
+                if(isUnlock) { emptySeeds[i].SetActive(true); }
                 
             }
         }
