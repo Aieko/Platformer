@@ -12,7 +12,7 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField] private GameObject mapSelectionPanel;
     [SerializeField] private GameObject[] levelSelectionPanels;
 
-    public int seeds;
+    public int seeds { get; private set; }
     
     public MapSelection[] mapSelections;
     public Text[] questSeedsText;
